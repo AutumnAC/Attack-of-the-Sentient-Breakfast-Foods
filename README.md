@@ -41,8 +41,7 @@ The waffle will wander randomly and avoid the evil pancakes at all costs.
    
 #### State Transistions
 
-- _List all the ways this agent can transition to this state_
-   - The waffle will transition to this state if there are no pancakes within a certain radius of it.
+- The waffle will transition to this state if there are no pancakes within a certain radius of it.
    
 ### Flee
 
@@ -58,8 +57,7 @@ The waffle will wander randomly and avoid the evil pancakes at all costs.
    
 #### State Transistions
 
-- _List all the ways this agent can transition to this state_
-  - The waffle will transition to this state if there is a pancake within a certain radius of it.
+- The waffle will transition to this state if there is a pancake within a certain radius of it.
 
 ## Pancake
 
@@ -79,7 +77,6 @@ The pancake roves the play area and will chase after any waffles it encounters.
    
 #### State Transistions
 
-- _List all the ways this agent can transition to this state_
 - If the pancake has eaten/collided with a waffle, it will transition to this state
 - It will also transition to this state if there are no waffles within a certain radius of it
    
@@ -97,7 +94,6 @@ The pancake roves the play area and will chase after any waffles it encounters.
 
 #### State Transistions
 
-- _List all the ways this agent can transition to this state_
 - It will transition to this state if there is a waffle within a certan radius of it
 
 ## Sources
