@@ -162,7 +162,7 @@ MonoBehaviour:
   useFriction: 1
   frictionCoeffecient: 9.6
   maxSpeed: 20
-  mainCamera: {fileID: 519420031}
+  mainCamera: {fileID: 0}
   radius: 1.1
 --- !u!212 &55180274
 SpriteRenderer:
@@ -244,9 +244,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   physicsObject: {fileID: 55180273}
-  maxSpeed: 20
-  maxForce: 1
-  target: {fileID: 1718474572}
+  maxSpeed: 0
+  maxForce: 0
+  boundsTime: 1
+  separateRange: 1
+  target: {fileID: 1718474576}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -368,9 +370,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be50b842b7604d6489f41f83135bc5ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  physicsObjects:
-  - {fileID: 55180273}
-  - {fileID: 1718474576}
+  waffles: []
+  pancakes: []
+  waffleNumber: 10
+  pancakeNumber: 5
+  wafflePrefab: {fileID: 1718474575}
+  pancakePrefab: {fileID: 55180276}
+  mainCamera: {fileID: 0}
 --- !u!4 &1064353569
 Transform:
   m_ObjectHideFlags: 0
@@ -487,6 +493,8 @@ MonoBehaviour:
   physicsObject: {fileID: 1718474576}
   maxSpeed: 5
   maxForce: 9
+  boundsTime: 1
+  separateRange: 1
   target: {fileID: 55180272}
 --- !u!114 &1718474576
 MonoBehaviour:
@@ -505,8 +513,8 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   acceleration: {x: 0, y: 0, z: 0}
   mass: 2
-  useFriction: 1
+  useFriction: 0
   frictionCoeffecient: 0.96
   maxSpeed: 10
-  mainCamera: {fileID: 519420031}
+  mainCamera: {fileID: 0}
   radius: 0.7

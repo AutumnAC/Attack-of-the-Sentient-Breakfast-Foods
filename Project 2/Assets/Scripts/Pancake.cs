@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Pancake : Agent
 {
-    [SerializeField] private GameObject target;
+    [SerializeField] private PhysicsObject target;
 
     protected override void CalcSteeringForces()
     {
@@ -16,6 +16,11 @@ public class Pancake : Agent
         {
             physicsObject.ApplyForce(Seek(Vector3.zero));
         }
+    }
+
+    protected override void Init()
+    {
+        physicsObject.MainCamera = CollisionManager.Instance.MainCamera;
     }
 
 }

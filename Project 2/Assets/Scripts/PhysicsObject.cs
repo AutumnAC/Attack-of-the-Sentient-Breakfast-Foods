@@ -26,7 +26,7 @@ public class PhysicsObject : MonoBehaviour
     private Vector3 screenMax = Vector3.zero;
 
     // Camera
-    [SerializeField] Camera mainCamera;
+    [SerializeField] private Camera mainCamera;
 
     // For collisions
     [SerializeField] private float radius;
@@ -59,6 +59,12 @@ public class PhysicsObject : MonoBehaviour
         set { isColliding = value; }
     }
 
+    public Camera MainCamera
+    {
+        get { return mainCamera; }
+        set { mainCamera = value; }
+    }
+
 
     // Start is called before the first frame update
     void Start()
@@ -81,9 +87,6 @@ public class PhysicsObject : MonoBehaviour
 
         // Calculate the velocity for this frame - New
         velocity += acceleration * Time.deltaTime;
-
-        // Bounce the object if it hits the edges of the screen
-        Bounce();
 
         // Clamp the velocity to a maximum speed
         velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
@@ -123,39 +126,6 @@ public class PhysicsObject : MonoBehaviour
         friction.Normalize();
         friction = friction * coeff;
         ApplyForce(friction);
-    }
-
-    /// <summary>
-    /// Bounces the object when it hits the edge of the screen.
-    /// </summary>
-    private void Bounce()
-    {
-        // If the object goes beyond the edge of the screen, move it to within the edge of the screen and reverse its velocity
-
-        if (position.x > screenMax.x)
-        {
-            velocity.x *= -1;
-            position.x = screenMax.x;
-        }
-
-        else if (position.x < -screenMax.x)
-        {
-            velocity.x *= -1;
-            position.x = -screenMax.x;
-        }
-
-
-        if (position.y > screenMax.y)
-        {
-            velocity.y *= -1;
-            position.y = screenMax.y;
-        }
-
-        else if (position.y < -screenMax.y)
-        {
-            velocity.y *= -1;
-            position.y = -screenMax.y;
-        }
     }
 
     /// <summary>
