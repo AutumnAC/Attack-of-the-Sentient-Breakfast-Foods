@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Class purpose: Abstract parent class for the different types of agents
+
 public abstract class Agent : MonoBehaviour
 {
     /* FIELDS AND PROPERTIES */
@@ -17,20 +19,31 @@ public abstract class Agent : MonoBehaviour
     protected Vector3 wanderForce;
 
     // Scalar value for wander
-    protected float wanderScalar = 1f;
+    [SerializeField] protected float wanderScalar = 1f;
 
     // The angle for wandering
-    protected float wanderAngle = 0f;
+    [SerializeField] protected float wanderAngle = 0f;
 
     // The maximum angle for wandering
-    protected float maxWanderAngle = 360f;
+    [SerializeField] protected float maxWanderAngle = 360f;
+
+    // Vector for flee force
+    protected Vector3 fleeForce;
+
+    // Scalar value for fleeing
+    [SerializeField] protected float fleeScalar = 1f;
+
+    // Scalar for seek force
+    [SerializeField] protected float seekScalar = 1f;
 
     // Vector for stay-in-bounds force
     protected Vector3 boundsForce;
 
     // Scalar for bounds force
-    [Min(1f)]
-    protected float boundsScalar = 5f;
+    [SerializeField] protected float boundsScalar = 5f;
+
+    // Scalar for separation force
+    [SerializeField] protected float separateScalar = 1f;
 
     // Amount of time for bounds
     [SerializeField] protected float boundsTime = 1f;
@@ -52,19 +65,26 @@ public abstract class Agent : MonoBehaviour
 
     /* METHODS */
 
-    private void Start()
-    {
-    }
-
     // Update is called once per frame
     void Update()
     {
+        // Start with the ultimate force at zero
         ultimaForce = Vector3.zero;
 
+        // Calculate the steering forces (handled in the child classes)
         CalcSteeringForces();
 
+        // Clamp the magnitude to the maximum force
         Vector3.ClampMagnitude(ultimaForce, maxForce);
+
+        // Apply the ultimate force to the agent
         physicsObject.ApplyForce(ultimaForce);
+    }
+
+    private void Awake()
+    {
+        // Initialize the agent
+        Init();
     }
 
     // Protected method to calculate the steering forces
@@ -197,10 +217,11 @@ public abstract class Agent : MonoBehaviour
             || futurePos.y > physicsObject.ScreenMax.y
             || futurePos.y < -physicsObject.ScreenMax.y)
         {
+            // Seek the center of the screen
             return Seek(Vector3.zero);
         }
 
-        // Otherwise, return the zero vector -- the agent doesn't need to turn around
+        // Otherwise, return the zero vector -- the agent doesn't need to do anything
         else
         {
             return Vector3.zero;
@@ -228,4 +249,37 @@ public abstract class Agent : MonoBehaviour
 
         return separateForce;
     }
+
+    /// <summary>
+    /// Gets the waffle closest to the agent.
+    /// </summary>
+    /// <returns>The nearest waffle.</returns>
+    protected Waffle FindClosestWaffle()
+    {
+        // Set the minimum distance to as high as possible
+        float minDist = Mathf.Infinity;
+
+        // Set the nearest game object to null
+        Waffle nearest = null;
+
+        // Loop through each waffle
+        foreach (Waffle waffle in CollisionManager.Instance.Waffles)
+        {
+            // Calculate the distance between the agent and the waffle
+            float dist = Mathf.Pow(waffle.transform.position.x - transform.position.x, 2) + Mathf.Pow(waffle.transform.position.y - transform.position.y, 2);
+
+            // If that distance is less than the minimum distance
+            if (dist < minDist)
+            {
+                // Set the min distance equal the distance between the two, and set the nearest waffle to the current waffle
+                minDist = dist;
+                nearest = waffle;
+            }
+
+        }
+
+        // Return the nearest waffle
+        return nearest;
+    }
+
 }

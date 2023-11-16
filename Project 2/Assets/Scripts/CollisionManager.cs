@@ -2,15 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Class purpose: Manager for handing agent interactions
+
 public class CollisionManager : Singleton<CollisionManager>
 {
+    /* FIELDS */
+
     // List of agents in the scene
     [SerializeField] private List<Waffle> waffles;
     [SerializeField] private List<Pancake> pancakes;
 
     // Number of each type of agent to spawn in the scene
     [SerializeField] private int waffleNumber = 10;
-    [SerializeField] private int pancakeNumber = 5;
+    [SerializeField] private int pancakeNumber = 0;
 
     // Prefabs for agent
     [SerializeField] private Waffle wafflePrefab;
@@ -21,6 +25,9 @@ public class CollisionManager : Singleton<CollisionManager>
 
     // (Optional) Prevent non-singleton constructor use.
     protected CollisionManager() { }
+
+
+    /* PROPERTIES */
 
     public List<Waffle> Waffles
     {
@@ -37,13 +44,33 @@ public class CollisionManager : Singleton<CollisionManager>
         get { return mainCamera; }
     }
 
+
+    /* METHODS */
+
     private void Start()
     {
         // Spawn in the waffles
         for (int i = 0; i < waffleNumber; i++)
         {
-            waffles.Add(Instantiate(wafflePrefab, Vector3.zero, Quaternion.identity));
+            // Instantiate the waffle with a random x and y location within the bounds of the screen, and add it to the list
+            waffles.Add(Instantiate(wafflePrefab,
+                new Vector3(Random.Range(mainCamera.orthographicSize * mainCamera.aspect, -mainCamera.orthographicSize * mainCamera.aspect),
+                    Random.Range(mainCamera.orthographicSize, -mainCamera.orthographicSize),
+                    0),
+                Quaternion.identity));
         }
+
+        // Spawn in the pancakes
+        for (int i = 0; i < pancakeNumber; i++)
+        {
+            // Instantiate the pancake with a random x and y location within the bounds of the screen, and add it to the list
+            pancakes.Add(Instantiate(pancakePrefab,
+                new Vector3(Random.Range(mainCamera.orthographicSize * mainCamera.aspect, -mainCamera.orthographicSize * mainCamera.aspect),
+                    Random.Range(mainCamera.orthographicSize, -mainCamera.orthographicSize),
+                    0),
+                Quaternion.identity));
+        }
+
     }
 
     // Update is called once per frame
@@ -60,7 +87,7 @@ public class CollisionManager : Singleton<CollisionManager>
                     // Check if they're colliding
                     if (CollisionCheck(waffles[x].PhysicsObject, waffles[y].PhysicsObject))
                     {
-                        // If they are, set their collision flags to true
+                        // If they are, set their collision flags to true -- currently does nothing
                         waffles[x].PhysicsObject.IsColliding = true;
                         waffles[y].PhysicsObject.IsColliding = true;
                     }
@@ -68,9 +95,6 @@ public class CollisionManager : Singleton<CollisionManager>
             }
         }
     }
-
-    // Spawn methods
-    // Look at spawn manager from project 1
 
     /// <summary>
     /// Checks for collision using bounding circles.

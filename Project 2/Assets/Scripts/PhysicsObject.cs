@@ -2,8 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Class purpose: Handles physics for agents.
+
 public class PhysicsObject : MonoBehaviour
 {
+    /* FIELDS */
+
     // Pposition, direction, velocity
     [SerializeField] private Vector3 position;
     [SerializeField] private Vector3 direction;
@@ -31,6 +35,9 @@ public class PhysicsObject : MonoBehaviour
     // For collisions
     [SerializeField] private float radius;
     private bool isColliding;
+
+
+    /* PROPERTIES */
 
     public Vector3 Position
     {
@@ -66,12 +73,15 @@ public class PhysicsObject : MonoBehaviour
     }
 
 
+    /* METHODS */
+
     // Start is called before the first frame update
     void Start()
     {
         // Set the position variable equal to the transform position
         position = transform.position;
 
+        // Set the screen max to the camera size
         screenMax.x = mainCamera.orthographicSize * mainCamera.aspect;
         screenMax.y = mainCamera.orthographicSize;
     }
@@ -85,7 +95,7 @@ public class PhysicsObject : MonoBehaviour
             ApplyFriction(frictionCoeffecient);
         }
 
-        // Calculate the velocity for this frame - New
+        // Calculate the velocity for this frame
         velocity += acceleration * Time.deltaTime;
 
         // Clamp the velocity to a maximum speed
@@ -94,7 +104,7 @@ public class PhysicsObject : MonoBehaviour
         // Set the position based on the velocity
         position += velocity * Time.deltaTime;
 
-        // Grab current direction from velocity  - New
+        // Grab current direction from velocity
         direction = velocity.normalized;
 
         // Set the transform position to the position variable
@@ -122,9 +132,16 @@ public class PhysicsObject : MonoBehaviour
     /// <param name="coeff">The friction coeffecient.</param>
     private void ApplyFriction(float coeff)
     {
+        // Make the friction the reverse of the velocity
         Vector3 friction = velocity * -1;
+
+        // Normalize it
         friction.Normalize();
+
+        // Multiply it by the friction coeffecient
         friction = friction * coeff;
+
+        // Apply it
         ApplyForce(friction);
     }
 
