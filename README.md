@@ -15,45 +15,40 @@ In this simulation, waffles will flee from the evil pancakes, who are constantly
 
 ### Controls
 
-- The player can left-click to place a puddle of syrup. (A stretch goal would be to add functionality so that the longer the player holds down the mouse for, the bigger the puddle of syrup becomes.) The player can use this strategically to trap the evil pancakes and keep them from getting to the waffles.
--   _List all of the actions the player can have in your simulation_
-    -   _Include how to preform each action ( keyboard, mouse, UI Input )_
-    -   _Include what impact an action has in the simulation ( if is could be unclear )_
+- The player can left-click to place a puddle of syrup. (A stretch goal would be to add functionality so that the longer the player holds down the mouse for, the bigger the puddle of syrup becomes.) The player can use this strategically to trap the evil pancakes and keep them from getting to the waffles, or, if they're feeling mean, they can use it to trap the waffles instead.
 
 ## Waffle
 
-The waffle will wander randomly and avoid the evil pancakes at all costs.
+The waffle will wander around the screen randomly and avoid the evil pancakes at all costs.
 
 ### Wander
 
-**Objective:** The waffle will slowly wander aimlessly within bounds.
+**Objective:** The waffle will aimlessly explore the play area at random.
 
 #### Steering Behaviors
 
-- _List all behaviors used by this state_
-   - _If behavior has input data list it here_
-   - _eg, Flee - nearest Agent2_
+- Wander: The waffle will randomly wander around the play area with a wander algorithm.
 - Obstacles:
-    - Waffles will avoid syrup in this state.
-    - _List all obstacle types this state avoids_
+    - The waffle will avoid syrup in this state.
 - Seperation
-    - Waffles will separate from other waffles.
+    - The waffle will separate from other waffles.
    
 #### State Transistions
 
-- The waffle will transition to this state if there are no pancakes within a certain radius of it.
+- The waffle will transition to this state if there are no pancakes within a certain range of it.
    
 ### Flee
 
-**Objective:** The waffle will flee at top speed away from a pancake.
+**Objective:** The waffle wants to avoid getting eaten by a pancake.
 
 #### Steering Behaviors
 
-- _List all behaviors used by this state_
-- Obstacles - _List all obstacle types this state avoids_
-    - Waffles will avoid syrup in this state.
+- Flee: The waffle will run from nearby pancakes using flee algorithms, weighted by the distance between it and the pancakes (very similar to Separate).
+    - Input: All pancakes within a certain range
+- Obstacles
+    - The waffle will avoid syrup in this state.
 - Seperation
-    - Waffles will separate from other waffles.
+    - The waffle will separate from other waffles.
    
 #### State Transistions
 
@@ -70,14 +65,14 @@ The pancake roves the play area and will chase after any waffles it encounters.
 #### Steering Behaviors
 
 - _List all behaviors used by this state_
-- Obstacles - _List all obstacle types this state avoids_
+- Obstacles
     - Pancakes will avoid syrup in this state.
-- Seperation - _List all agents this state seperates from_
+- Seperation
     - Pancakes will separate from other pancakes.
    
 #### State Transistions
 
-- If the pancake has eaten/collided with a waffle, it will transition to this state
+- If the pancake has eaten/collided with a waffle, it will transition to this state for a short period of time before checking for nearby waffles again
 - It will also transition to this state if there are no waffles within a certain radius of it
    
 ### Seek
@@ -86,11 +81,12 @@ The pancake roves the play area and will chase after any waffles it encounters.
 
 #### Steering Behaviors
 
-- _List all behaviors used by this state_
-- Obstacles - _List all obstacle types this state avoids_
+- Seek: The pancake will use Seek to go after the waffle closest to it.
+    - Input: The nearest waffle. 
+- Obstacles
     - Pancakes will avoid syrup in this state.
-- Seperation - _List all agents this state seperates from_
-    - Pancakes will separate from other pancakes.   
+- Seperation
+    - The pancake will separate from other pancakes.   
 
 #### State Transistions
 
@@ -98,8 +94,8 @@ The pancake roves the play area and will chase after any waffles it encounters.
 
 ## Sources
 
--   _List all project sources here –models, textures, sound clips, assets, etc._
--   _If an asset is from the Unity store, include a link to the page and the author’s name_
+-   Waffle art asset by me
+-   Pancake art asset by me
 
 ## Make it Your Own
 
