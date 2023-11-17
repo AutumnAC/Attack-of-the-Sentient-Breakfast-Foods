@@ -4,7 +4,7 @@ using UnityEngine;
 
 // Class purpose: Manager for handing agent interactions
 
-public class CollisionManager : Singleton<CollisionManager>
+public class Manager : Singleton<Manager>
 {
     /* FIELDS */
 
@@ -14,7 +14,7 @@ public class CollisionManager : Singleton<CollisionManager>
 
     // Number of each type of agent to spawn in the scene
     [SerializeField] private int waffleNumber = 10;
-    [SerializeField] private int pancakeNumber = 0;
+    [SerializeField] private int pancakeNumber = 5;
 
     // Prefabs for agent
     [SerializeField] private Waffle wafflePrefab;
@@ -24,7 +24,7 @@ public class CollisionManager : Singleton<CollisionManager>
     [SerializeField] private Camera mainCamera;
 
     // (Optional) Prevent non-singleton constructor use.
-    protected CollisionManager() { }
+    protected Manager() { }
 
 
     /* PROPERTIES */

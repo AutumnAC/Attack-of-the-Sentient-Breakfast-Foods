@@ -67,7 +67,7 @@ public class Waffle : Agent
         ultimaForce += boundsForce;
 
         // Add the scaled separation force to the ultimate force
-        ultimaForce += Separate() * separateScalar;
+        ultimaForce += SeparateWaffles() * separateScalar;
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ public class Waffle : Agent
     protected override void Init()
     {
         // Set a reference to the main camera
-        physicsObject.MainCamera = CollisionManager.Instance.MainCamera;
+        physicsObject.MainCamera = Manager.Instance.MainCamera;
 
         // Initialize a random angle for the wander angle
         wanderAngle = UnityEngine.Random.Range(-maxWanderAngle, maxWanderAngle);

@@ -206,6 +206,11 @@ public abstract class Agent : MonoBehaviour
         return Seek(targetOffset);
     }
 
+    /// <summary>
+    /// Creates a force that makes the agent stay in bounds.
+    /// </summary>
+    /// <param name="time">The time ahead to look to see if the agent's current trajectory will take it out of bounds.</param>
+    /// <returns>The steering force.</returns>
     protected Vector3 StayInBounds(float time)
     {
         // Get the future position
@@ -228,13 +233,42 @@ public abstract class Agent : MonoBehaviour
         }
     }
 
-
-    protected Vector3 Separate()
+    /// <summary>
+    /// Separates the agent from waffles.
+    /// </summary>
+    /// <returns>The steering force.</returns>
+    protected Vector3 SeparateWaffles()
     {
         Vector3 separateForce = Vector3.zero;
 
-        // Go through all agents -- should probably decrease range so I'm not checking all of them every time
-        foreach (Agent a in CollisionManager.Instance.Waffles)
+        // Go through all waffles -- should probably decrease range so I'm not checking all of them every time
+        foreach (Agent a in Manager.Instance.Waffles)
+        {
+            // Get the square of the distance between the two agents
+            float dist = Mathf.Pow(a.transform.position.x - transform.position.x, 2) + Mathf.Pow(a.transform.position.y - transform.position.y, 2);
+
+            // As long as the agents aren't on top of each other
+            if (Mathf.Epsilon < dist)
+            {
+                // Flee from the agent proportional to its distance
+                separateForce += Flee(a.physicsObject) * separateRange / dist;
+            }
+        }
+
+        return separateForce;
+    }
+
+    /// <summary>
+    /// Separates the agent from pancakes. Should likely be the same method as above since the logic is identical,
+    /// but I don't have the time at the moment to sort out how the type-checking logic should work.
+    /// </summary>
+    /// <returns></returns>
+    protected Vector3 SeparatePancakes()
+    {
+        Vector3 separateForce = Vector3.zero;
+
+        // Go through all pancakes -- should probably decrease range so I'm not checking all of them every time
+        foreach (Agent a in Manager.Instance.Pancakes)
         {
             // Get the square of the distance between the two agents
             float dist = Mathf.Pow(a.transform.position.x - transform.position.x, 2) + Mathf.Pow(a.transform.position.y - transform.position.y, 2);
@@ -263,7 +297,7 @@ public abstract class Agent : MonoBehaviour
         Waffle nearest = null;
 
         // Loop through each waffle
-        foreach (Waffle waffle in CollisionManager.Instance.Waffles)
+        foreach (Waffle waffle in Manager.Instance.Waffles)
         {
             // Calculate the distance between the agent and the waffle
             float dist = Mathf.Pow(waffle.transform.position.x - transform.position.x, 2) + Mathf.Pow(waffle.transform.position.y - transform.position.y, 2);

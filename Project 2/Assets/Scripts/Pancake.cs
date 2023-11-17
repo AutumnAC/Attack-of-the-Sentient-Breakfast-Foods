@@ -22,12 +22,10 @@ public class Pancake : Agent
             ultimaForce += Seek(target) * seekScalar;
         }
 
-        // Otherwise, seek the center of the screen
+        // Otherwise, wander -- temporary code until I implement a better steering behavior
         else
         {
-            ultimaForce += Seek(Vector3.zero) * seekScalar;
-            Debug.Log(ultimaForce);
-            Debug.Log(Seek(Vector3.zero));
+            ultimaForce += Wander(ref wanderAngle, 20f, .2f, .5f) * wanderScalar;
         }
 
         // Get the bounds force and scale it
@@ -37,7 +35,7 @@ public class Pancake : Agent
         ultimaForce += boundsForce;
 
         // Add the scaled separation force to the ultimate force
-        ultimaForce += Separate() * separateScalar;
+        ultimaForce += SeparatePancakes() * separateScalar;
 
     }
 
@@ -47,7 +45,7 @@ public class Pancake : Agent
     protected override void Init()
     {
         // Set up the main camera
-        physicsObject.MainCamera = CollisionManager.Instance.MainCamera;
+        physicsObject.MainCamera = Manager.Instance.MainCamera;
     }
 
 }
