@@ -2,7 +2,6 @@
 
 [Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)
 
-_REPLACE OR REMOVE EVERYTING BETWEEN "\_"_
 
 ### Student Info
 
@@ -27,7 +26,7 @@ The waffle will wander around the screen randomly and avoid the evil pancakes at
 
 #### Steering Behaviors
 
-- Wander: The waffle will randomly wander around the play area with a wander algorithm.
+- Wander: The waffle will randomly wander around the play area with the wander steering behavior.
 - Obstacles:
     - The waffle will avoid syrup in this state.
 - Seperation
@@ -43,7 +42,7 @@ The waffle will wander around the screen randomly and avoid the evil pancakes at
 
 #### Steering Behaviors
 
-- Flee: The waffle will run from nearby pancakes using flee algorithms, weighted by the distance between it and the pancakes (very similar to Separate).
+- Flee: The waffle will run from nearby pancakes using multiple uses of the flee steering behavior, weighted by the distance between it and the pancakes (very similar to Separate).
     - Input: All pancakes within a certain range
 - Obstacles
     - The waffle will avoid syrup in this state.
@@ -64,7 +63,7 @@ The pancake roves the play area and will chase after any waffles it encounters.
 
 #### Steering Behaviors
 
-- _List all behaviors used by this state_
+- Flow Field Following: The pancake will follow a pattern around the screen using the flow field following steering behavior.
 - Obstacles
     - Pancakes will avoid syrup in this state.
 - Seperation
@@ -99,10 +98,8 @@ The pancake roves the play area and will chase after any waffles it encounters.
 
 ## Make it Your Own
 
-- I will be making my own art assets.
-- _List out what you added to your game to make it different for you_
-- _If you will add more agents or states make sure to list here and add it to the documention above_
-- _If you will add your own assets make sure to list it here and add it to the Sources section
+- I'm making my own art assets.
+- I'm also using a steering behavior not discussed in class, flow field following.
 
 ## Known Issues
 
