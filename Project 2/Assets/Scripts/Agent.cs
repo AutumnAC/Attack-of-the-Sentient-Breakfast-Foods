@@ -241,18 +241,11 @@ public abstract class Agent : MonoBehaviour
     {
         Vector3 separateForce = Vector3.zero;
 
-        // Go through all waffles -- should probably decrease range so I'm not checking all of them every time
+        // Go through all waffles
         foreach (Agent a in Manager.Instance.Waffles)
         {
-            // Get the square of the distance between the two agents
-            float dist = Mathf.Pow(a.transform.position.x - transform.position.x, 2) + Mathf.Pow(a.transform.position.y - transform.position.y, 2);
-
-            // As long as the agents aren't on top of each other
-            if (Mathf.Epsilon < dist)
-            {
-                // Flee from the agent proportional to its distance
-                separateForce += Flee(a.physicsObject) * separateRange / dist;
-            }
+            // Add each separate force to the overall separate force
+            separateForce += Separate(a);
         }
 
         return separateForce;
@@ -267,18 +260,33 @@ public abstract class Agent : MonoBehaviour
     {
         Vector3 separateForce = Vector3.zero;
 
-        // Go through all pancakes -- should probably decrease range so I'm not checking all of them every time
+        // Go through all pancakes
         foreach (Agent a in Manager.Instance.Pancakes)
         {
-            // Get the square of the distance between the two agents
-            float dist = Mathf.Pow(a.transform.position.x - transform.position.x, 2) + Mathf.Pow(a.transform.position.y - transform.position.y, 2);
+            // Add each separate force to the overall separate force
+            separateForce += Separate(a);
+        }
 
-            // As long as the agents aren't on top of each other
-            if (Mathf.Epsilon < dist)
-            {
-                // Flee from the agent proportional to its distance
-                separateForce += Flee(a.physicsObject) * separateRange / dist;
-            }
+        return separateForce;
+    }
+
+    /// <summary>
+    /// Helper method that calculates the separation force between two agents.
+    /// </summary>
+    /// <param name="a">The agent to separate from.</param>
+    /// <returns></returns>
+    private Vector3 Separate(Agent a)
+    {
+        Vector3 separateForce = Vector3.zero;
+
+        // Get the square of the distance between the two agents
+        float dist = Mathf.Pow(a.transform.position.x - transform.position.x, 2) + Mathf.Pow(a.transform.position.y - transform.position.y, 2);
+
+        // As long as the agents aren't on top of each other
+        if (Mathf.Epsilon < dist)
+        {
+            // Flee from the agent proportional to its distance
+            separateForce = Flee(a.physicsObject) * separateRange / dist;
         }
 
         return separateForce;

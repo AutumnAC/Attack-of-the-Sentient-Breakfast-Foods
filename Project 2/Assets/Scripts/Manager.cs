@@ -13,8 +13,8 @@ public class Manager : Singleton<Manager>
     [SerializeField] private List<Pancake> pancakes;
 
     // Number of each type of agent to spawn in the scene
-    [SerializeField] private int waffleNumber = 10;
-    [SerializeField] private int pancakeNumber = 5;
+    [SerializeField] private int waffleNumber;
+    [SerializeField] private int pancakeNumber;
 
     // Prefabs for agent
     [SerializeField] private Waffle wafflePrefab;
