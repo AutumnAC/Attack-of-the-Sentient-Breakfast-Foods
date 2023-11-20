@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Enum for the Waffle's state
+// Enum for the waffle's state
 public enum WaffleStates
 {
     Wander,
@@ -40,20 +40,27 @@ public class Waffle : Agent
 
                 break;
 
-            // If the waffle is fleeing
+            // If the waffle is fleeing -- state is currently never reached
             case WaffleStates.Flee:
 
-                // For now, do nothing -- just getting out ahead of the next checkpoint
+                // Find the closest pancake -- later, this needs to be modified to be limited to a range
+                target = FindClosestPancake().gameObject;
 
-                /*target = FindClosestWaffle(); // will be updated to pancake later
+                // If there is a target
+                if (target != null)
+                {
+                    // Flee from the pancake
+                    fleeForce = Flee(target.GetComponent<PhysicsObject>()) * fleeScalar;
 
-                // must check if target is null-- be careful!
+                    // Add the force of the fleeing to the ultimate force
+                    ultimaForce += fleeForce;
+                }
 
-                fleeForce = Flee(target.GetComponent<PhysicsObject>());
-
-                fleeForce *= fleeScalar;
-
-                ultimaForce += fleeForce;*/
+                // If there is no pancake, go back to wandering
+                else
+                {
+                    currentState = WaffleStates.Wander;
+                }
 
                 break;
         }

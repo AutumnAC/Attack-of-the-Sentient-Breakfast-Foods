@@ -48,6 +48,9 @@ public abstract class Agent : MonoBehaviour
     // Amount of time for bounds
     [SerializeField] protected float boundsTime = 1f;
 
+    // Scalar for flow field force
+    [SerializeField] protected float flowFieldScalar = 1f;
+
     // The sum total of all the forces
     protected Vector3 ultimaForce;
 
@@ -280,7 +283,7 @@ public abstract class Agent : MonoBehaviour
         Vector3 separateForce = Vector3.zero;
 
         // Get the square of the distance between the two agents
-        float dist = Mathf.Pow(a.transform.position.x - transform.position.x, 2) + Mathf.Pow(a.transform.position.y - transform.position.y, 2);
+        float dist = CalcSquaredDistance(transform.position, a.transform.position);
 
         // As long as the agents aren't on top of each other
         if (Mathf.Epsilon < dist)
@@ -308,7 +311,7 @@ public abstract class Agent : MonoBehaviour
         foreach (Waffle waffle in Manager.Instance.Waffles)
         {
             // Calculate the distance between the agent and the waffle
-            float dist = Mathf.Pow(waffle.transform.position.x - transform.position.x, 2) + Mathf.Pow(waffle.transform.position.y - transform.position.y, 2);
+            float dist = CalcSquaredDistance(transform.position, waffle.transform.position);
 
             // If that distance is less than the minimum distance
             if (dist < minDist)
@@ -322,6 +325,57 @@ public abstract class Agent : MonoBehaviour
 
         // Return the nearest waffle
         return nearest;
+    }
+
+    /// <summary>
+    /// Gets the pancake closest to the agent.
+    /// </summary>
+    /// <returns>The nearest pancake.</returns>
+    protected Pancake FindClosestPancake()
+    {
+        // Set the minimum distance to as high as possible
+        float minDist = Mathf.Infinity;
+
+        // Set the nearest game object to null
+        Pancake nearest = null;
+
+        // Loop through each waffle
+        foreach (Pancake pancake in Manager.Instance.Pancakes)
+        {
+            // Calculate the distance between the agent and the pancake
+            float dist = CalcSquaredDistance(transform.position, pancake.transform.position);
+
+            // If that distance is less than the minimum distance
+            if (dist < minDist)
+            {
+                // Set the min distance equal the distance between the two, and set the nearest pancake to the current pancake
+                minDist = dist;
+                nearest = pancake;
+            }
+
+        }
+
+        // Return the nearest pancake
+        return nearest;
+    }
+
+    /// <summary>
+    /// Method for following the flow field. Currently just uses Wander() until I can get the flow field set up.
+    /// </summary>
+    protected Vector3 FollowFlowField()
+    {
+        return Wander(ref wanderAngle, 20f, .2f, .5f);
+    }
+
+    /// <summary>
+    /// Helper method that calculates the distance squared between two vectors.
+    /// </summary>
+    /// <param name="a">The first vector.</param>
+    /// <param name="b">The second vector.</param>
+    /// <returns></returns>
+    private float CalcSquaredDistance(Vector3 a, Vector3 b)
+    {
+        return Mathf.Pow(b.x - a.x, 2) + Mathf.Pow(b.y - a.y, 2);
     }
 
 }
