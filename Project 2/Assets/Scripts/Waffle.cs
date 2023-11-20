@@ -73,8 +73,13 @@ public class Waffle : Agent
         // Add the bounds force to the ultimate force
         ultimaForce += boundsForce;
 
+        // Flocking -- temp code for experimenting with different behaviors
+        //ultimaForce += Seek(Manager.Instance.CenterPoint);
+        //ultimaForce += Manager.Instance.SharedDirection * maxSpeed - physicsObject.Velocity;
+
         // Add the scaled separation force to the ultimate force
         ultimaForce += SeparateWaffles() * separateScalar;
+
     }
 
     /// <summary>

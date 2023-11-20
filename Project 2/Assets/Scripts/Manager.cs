@@ -23,6 +23,21 @@ public class Manager : Singleton<Manager>
     // The camera
     [SerializeField] private Camera mainCamera;
 
+    // Experimental code for flocking
+    private Vector3 centerPoint = Vector3.zero;
+
+    private Vector3 sharedDirection = Vector3.zero;
+
+    public Vector3 CenterPoint
+    {
+        get { return centerPoint; }
+    }
+
+    public Vector3 SharedDirection
+    {
+        get { return sharedDirection; }
+    }
+
     // (Optional) Prevent non-singleton constructor use.
     protected Manager() { }
 
@@ -76,6 +91,10 @@ public class Manager : Singleton<Manager>
     // Update is called once per frame
     void Update()
     {
+        // Experimental code for flocking
+        centerPoint = GetCenterPoint();
+        sharedDirection = GetSharedDirection();
+
         // Check each physics object against each physics object
         for (int x = 0; x < waffles.Count; x++)
         {
@@ -109,4 +128,31 @@ public class Manager : Singleton<Manager>
             Mathf.Pow(b.transform.position.x - a.transform.position.x, 2)
             + Mathf.Pow(b.transform.position.y - a.transform.position.y, 2);
     }
+
+
+    // Experimental methods for flocking from following along in class
+    private Vector3 GetCenterPoint()
+    {
+        Vector3 totalVector = new Vector3();
+
+        foreach (Waffle waffle in waffles)
+        {
+            totalVector += waffle.transform.position;
+        }
+
+        return totalVector / waffles.Count;
+    }
+
+    private Vector3 GetSharedDirection()
+    {
+        Vector3 sumVector = Vector3.zero;
+
+        foreach (Waffle waffle in waffles)
+        {
+            sumVector += waffle.PhysicsObject.Velocity.normalized;
+        }
+
+        return sumVector.normalized;
+    }
+
 }

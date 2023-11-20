@@ -110,7 +110,7 @@ public class PhysicsObject : MonoBehaviour
         // Set the transform position to the position variable
         transform.position = position;
 
-        // Zero out acceleration - New
+        // Zero out acceleration
         acceleration = Vector3.zero;
 
         // Rotate the object towards the direction it's facing

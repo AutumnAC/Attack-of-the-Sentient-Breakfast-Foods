@@ -32,7 +32,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4396400175530401605
 SpriteRenderer:
@@ -129,7 +129,8 @@ MonoBehaviour:
   fleeScalar: 1
   seekScalar: 1
   boundsScalar: 5
-  separateScalar: 1
+  separateScalar: 3
   boundsTime: 1
+  flowFieldScalar: 1
   separateRange: 1
   target: {fileID: 0}

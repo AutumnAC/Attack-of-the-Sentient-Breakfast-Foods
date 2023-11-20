@@ -123,6 +123,14 @@ MonoBehaviour:
   physicsObject: {fileID: 4757581319871036211}
   maxSpeed: 5
   maxForce: 9
+  wanderScalar: 1
+  wanderAngle: 0
+  maxWanderAngle: 360
+  fleeScalar: 1
+  seekScalar: 1
+  boundsScalar: 5
+  separateScalar: 3
   boundsTime: 1
+  flowFieldScalar: 1
   separateRange: 1
   target: {fileID: 0}

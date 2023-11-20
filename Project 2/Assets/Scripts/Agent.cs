@@ -40,7 +40,7 @@ public abstract class Agent : MonoBehaviour
     protected Vector3 boundsForce;
 
     // Scalar for bounds force
-    [SerializeField] protected float boundsScalar = 5f;
+    [SerializeField] protected float boundsScalar = 0f;
 
     // Scalar for separation force
     [SerializeField] protected float separateScalar = 1f;
@@ -226,6 +226,7 @@ public abstract class Agent : MonoBehaviour
             || futurePos.y < -physicsObject.ScreenMax.y)
         {
             // Seek the center of the screen
+            Debug.Log(futurePos - physicsObject.ScreenMax);
             return Seek(Vector3.zero);
         }
 
