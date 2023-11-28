@@ -31,7 +31,7 @@ public class Pancake : Agent
             case PancakeStates.Patrol:
 
                 // Temporary code to test the seeking more effectively
-                currentState = PancakeStates.Seek;
+                //currentState = PancakeStates.Seek;
 
                 // Follow the flow field
                 ultimaForce += FollowFlowField() * flowFieldScalar;

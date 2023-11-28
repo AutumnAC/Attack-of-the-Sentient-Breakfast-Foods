@@ -365,7 +365,9 @@ public abstract class Agent : MonoBehaviour
     /// </summary>
     protected Vector3 FollowFlowField()
     {
-        return Wander(ref wanderAngle, 20f, .2f, .5f);
+        //Vector3[][] flowField = new Vector3[columns][];
+
+        return FlowField.Instance.GetFlowFieldPosition(transform.position);
     }
 
     /// <summary>

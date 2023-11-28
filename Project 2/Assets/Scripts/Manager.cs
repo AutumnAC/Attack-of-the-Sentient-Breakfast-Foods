@@ -38,9 +38,6 @@ public class Manager : Singleton<Manager>
         get { return sharedDirection; }
     }
 
-    // (Optional) Prevent non-singleton constructor use.
-    protected Manager() { }
-
 
     /* PROPERTIES */
 
@@ -58,6 +55,10 @@ public class Manager : Singleton<Manager>
     {
         get { return mainCamera; }
     }
+
+
+    // (Optional) Prevent non-singleton constructor use.
+    protected Manager() { }
 
 
     /* METHODS */

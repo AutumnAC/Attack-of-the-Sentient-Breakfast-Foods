@@ -128,7 +128,7 @@ MonoBehaviour:
   maxWanderAngle: 360
   fleeScalar: 1
   seekScalar: 1
-  boundsScalar: 5
+  boundsScalar: 10
   separateScalar: 3
   boundsTime: 1
   flowFieldScalar: 1
