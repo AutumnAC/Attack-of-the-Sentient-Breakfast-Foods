@@ -15,6 +15,9 @@ public abstract class Agent : MonoBehaviour
     [SerializeField] protected float maxSpeed;
     [SerializeField] protected float maxForce;
 
+    // Sprite renderer
+    protected SpriteRenderer spriteRenderer;
+
     // Vector for wander force
     protected Vector3 wanderForce;
 
@@ -226,7 +229,6 @@ public abstract class Agent : MonoBehaviour
             || futurePos.y < -physicsObject.ScreenMax.y)
         {
             // Seek the center of the screen
-            Debug.Log(futurePos - physicsObject.ScreenMax);
             return Seek(Vector3.zero);
         }
 
@@ -300,7 +302,7 @@ public abstract class Agent : MonoBehaviour
     /// Gets the waffle closest to the agent.
     /// </summary>
     /// <returns>The nearest waffle.</returns>
-    protected Waffle FindClosestWaffle()
+    protected Waffle FindClosestWaffle(int radius)
     {
         // Set the minimum distance to as high as possible
         float minDist = Mathf.Infinity;
@@ -315,7 +317,7 @@ public abstract class Agent : MonoBehaviour
             float dist = CalcSquaredDistance(transform.position, waffle.transform.position);
 
             // If that distance is less than the minimum distance
-            if (dist < minDist)
+            if (dist < minDist && dist < radius)
             {
                 // Set the min distance equal the distance between the two, and set the nearest waffle to the current waffle
                 minDist = dist;
@@ -361,7 +363,7 @@ public abstract class Agent : MonoBehaviour
     }
 
     /// <summary>
-    /// Method for following the flow field. Currently just uses Wander() until I can get the flow field set up.
+    /// Experimental method for flow field following. Currently unfinished.
     /// </summary>
     protected Vector3 FollowFlowField()
     {

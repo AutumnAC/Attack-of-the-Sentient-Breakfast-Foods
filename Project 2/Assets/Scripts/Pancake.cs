@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +7,7 @@ using UnityEngine;
 // Enum for the pancake's state
 public enum PancakeStates
 {
-    Patrol,
+    Flock,
     Seek,
 }
 
@@ -16,7 +17,7 @@ public enum PancakeStates
 public class Pancake : Agent
 {
     // The target to be used in Seek
-    [SerializeField] private GameObject target;
+    [SerializeField] private Waffle target;
 
     // State enum
     private PancakeStates currentState;
@@ -26,23 +27,52 @@ public class Pancake : Agent
     /// </summary>
     protected override void CalcSteeringForces()
     {
+        // This is almost certainly bad practice for an FSM and will be revised
+        // Check to see if the Waffles are nearby every frame to determine the current state
+
+        target = FindClosestWaffle(4);
+
+        if (target == null)
+        {
+            currentState = PancakeStates.Flock;
+        }
+
+        else
+        {
+            currentState = PancakeStates.Seek;
+        }
+
         switch (currentState)
         {
-            case PancakeStates.Patrol:
+            case PancakeStates.Flock:
+                // Set the sprite color to normal
+                spriteRenderer.color = Color.white;
 
-                // Temporary code to test the seeking more effectively
-                //currentState = PancakeStates.Seek;
+                // Follow the flow field -- experimental code
+                //ultimaForce += FollowFlowField() * flowFieldScalar;
 
-                // Follow the flow field
-                ultimaForce += FollowFlowField() * flowFieldScalar;
+                // Get a wander force
+                wanderForce = Wander(ref wanderAngle, 20f, .2f, .5f);
 
-                // No transition to Seek yet -- will check for any waffles within a certain radius
+                // Multiply it by its weight
+                wanderForce *= wanderScalar;
+
+                // Add it to the wander force
+                ultimaForce += wanderForce;
+
+                // Flocking
+                ultimaForce += Seek(Manager.Instance.CenterPoint);
+                ultimaForce += Manager.Instance.SharedDirection * maxSpeed - physicsObject.Velocity;
 
                 break;
 
             case PancakeStates.Seek:
 
-                target = FindClosestWaffle().gameObject;
+                ultimaForce += Seek(target.transform.position) * seekScalar;
+
+                spriteRenderer.color = Color.red;
+
+                /*target = FindClosestWaffle(3).gameObject;
 
                 // As long as there is a target
                 if (target != null)
@@ -55,7 +85,7 @@ public class Pancake : Agent
                 else
                 {
                     currentState = PancakeStates.Patrol;
-                }
+                }*/
 
                 break;
         }
@@ -79,6 +109,9 @@ public class Pancake : Agent
     {
         // Set up the main camera
         physicsObject.MainCamera = Manager.Instance.MainCamera;
+
+        // Set up the sprite renderer
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
 }

@@ -6,7 +6,7 @@ using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 
-// Class purpose: Create a flow field for the pancakes to follow. Currently just a stub.
+// Class purpose: Create a flow field for the pancakes to follow -- an unfinished experiment with using different algorithms.
 
 public class FlowField : Singleton<FlowField>
 {

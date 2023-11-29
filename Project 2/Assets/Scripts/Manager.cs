@@ -28,6 +28,8 @@ public class Manager : Singleton<Manager>
 
     private Vector3 sharedDirection = Vector3.zero;
 
+    /* PROPERTIES */
+
     public Vector3 CenterPoint
     {
         get { return centerPoint; }
@@ -37,9 +39,6 @@ public class Manager : Singleton<Manager>
     {
         get { return sharedDirection; }
     }
-
-
-    /* PROPERTIES */
 
     public List<Waffle> Waffles
     {
@@ -57,11 +56,11 @@ public class Manager : Singleton<Manager>
     }
 
 
+    /* METHODS */
+
     // (Optional) Prevent non-singleton constructor use.
     protected Manager() { }
 
-
-    /* METHODS */
 
     private void Start()
     {
@@ -99,18 +98,31 @@ public class Manager : Singleton<Manager>
         // Check each physics object against each physics object
         for (int x = 0; x < waffles.Count; x++)
         {
-            for (int y = 0; y < waffles.Count; y++)
+            for (int y = 0; y < pancakes.Count; y++)
             {
-                // As long as the two objects being checked are not the same
-                if (x != y)
+                //Debug.Log("x, y: " + x + ", " + y);
+
+                // Check if they're colliding
+                if (waffles.Count > 0 && CollisionCheck(waffles[x].PhysicsObject, pancakes[y].PhysicsObject))
                 {
-                    // Check if they're colliding
-                    if (CollisionCheck(waffles[x].PhysicsObject, waffles[y].PhysicsObject))
+                    Waffle waffle = waffles[x];
+                    //Debug.Log("x, y: " + x + ", " + y + " are colliding");
+
+                    // If they are, let the waffle know it's collided and remove the waffle from the list
+                    //waffles[x].PhysicsObject.IsColliding = true;
+                    waffles.RemoveAt(x);
+
+                    // Destroy the waffle
+                    Destroy(waffle.gameObject);
+
+                    // Step backwards in the list
+                    if (x > 0)
                     {
-                        // If they are, set their collision flags to true -- currently does nothing
-                        waffles[x].PhysicsObject.IsColliding = true;
-                        waffles[y].PhysicsObject.IsColliding = true;
+                        x--;
                     }
+
+                    // Set the pancake's collision flag to true -- currently does nothing
+                    pancakes[y].PhysicsObject.IsColliding = true;
                 }
             }
         }
@@ -131,29 +143,42 @@ public class Manager : Singleton<Manager>
     }
 
 
-    // Experimental methods for flocking from following along in class
+    /// <summary>
+    /// Gets the center point of all the pancakes.
+    /// </summary>
+    /// <returns>A steering vector pointng towards the center point.</returns>
     private Vector3 GetCenterPoint()
     {
         Vector3 totalVector = new Vector3();
 
-        foreach (Waffle waffle in waffles)
+        // Loop through all the pancakes
+        foreach (Pancake pancake in pancakes)
         {
-            totalVector += waffle.transform.position;
+            // Add each pancake's position to the total vector
+            totalVector += pancake.transform.position;
         }
 
-        return totalVector / waffles.Count;
+        // Return the averaged position
+        return totalVector / pancakes.Count;
     }
 
+    /// <summary>
+    /// Gets the average direction of all the pancakes.
+    /// </summary>
+    /// <returns>The average direction of all the pancakes.</returns>
     private Vector3 GetSharedDirection()
     {
-        Vector3 sumVector = Vector3.zero;
+        Vector3 totalVector = Vector3.zero;
 
-        foreach (Waffle waffle in waffles)
+        // Loop through all the pancakes
+        foreach (Pancake pancake in pancakes)
         {
-            sumVector += waffle.PhysicsObject.Velocity.normalized;
+            // Add each pancake's direction to the total vector
+            totalVector += pancake.PhysicsObject.Velocity.normalized;
         }
 
-        return sumVector.normalized;
+        // Return the averaged direction
+        return totalVector.normalized;
     }
 
 }

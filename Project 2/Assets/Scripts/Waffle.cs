@@ -23,8 +23,16 @@ public class Waffle : Agent
 
     protected override void CalcSteeringForces()
     {
+        // If the waffle's collision flag was turned on, destroy it
+        if (physicsObject.IsColliding)
+        {
+            //Manager.Instance.Waffles.Remove(this);
+            Destroy(gameObject);
+        }
+
+
         // Check the state -- does very little at present
-        switch(currentState)
+        switch (currentState)
         {
             // If the waffle is wandering
             case WaffleStates.Wander:
@@ -72,10 +80,6 @@ public class Waffle : Agent
 
         // Add the bounds force to the ultimate force
         ultimaForce += boundsForce;
-
-        // Flocking -- temp code for experimenting with different behaviors
-        //ultimaForce += Seek(Manager.Instance.CenterPoint);
-        //ultimaForce += Manager.Instance.SharedDirection * maxSpeed - physicsObject.Velocity;
 
         // Add the scaled separation force to the ultimate force
         ultimaForce += SeparateWaffles() * separateScalar;
