@@ -27,6 +27,7 @@ The waffle will wander around the screen randomly and avoid the evil pancakes at
 #### Steering Behaviors
 
 - Wander: The waffle will randomly wander around the play area with the wander steering behavior.
+- Bounds: The waffle will stay in bounds.
 - Obstacles:
     - The waffle will avoid syrup in this state.
 - Seperation
@@ -44,6 +45,7 @@ The waffle will wander around the screen randomly and avoid the evil pancakes at
 
 - Flee: The waffle will run from nearby pancakes using multiple uses of the flee steering behavior, weighted by the distance between it and the pancakes (very similar to Separate).
     - Input: All pancakes within a certain range
+- Bounds: The waffle will stay in bounds.
 - Obstacles
     - The waffle will avoid syrup in this state.
 - Seperation
@@ -55,15 +57,18 @@ The waffle will wander around the screen randomly and avoid the evil pancakes at
 
 ## Pancake
 
-The pancake roves the play area and will chase after any waffles it encounters.
+The pancake roves the play area as a pack with other pancakes and will chase after any waffles it encounters.
 
 ### Patrol
 
-**Objective:** The pancake will move back and forth across the screen, searching for waffles.
+**Objective:** The pancake will wander across the screen as a group with other pancakes, searching for waffles.
 
 #### Steering Behaviors
 
-- Flow Field Following: The pancake will follow a pattern around the screen using the flow field following steering behavior.
+- Flocking: The pancake will flock with other pancakes.
+- Wander: The pancake will wander around the play area.
+- Bounds: The pancake will stay in bounds.
+- Path following: A stretch goal would be to add path following.
 - Obstacles
     - Pancakes will avoid syrup in this state.
 - Seperation
@@ -82,6 +87,7 @@ The pancake roves the play area and will chase after any waffles it encounters.
 
 - Seek: The pancake will use Seek to go after the waffle closest to it.
     - Input: The nearest waffle. 
+- Bounds: The pancake will stay in bounds.
 - Obstacles
     - Pancakes will avoid syrup in this state.
 - Seperation
@@ -95,11 +101,11 @@ The pancake roves the play area and will chase after any waffles it encounters.
 
 -   Waffle art asset by me
 -   Pancake art asset by me
+-   Syrup art asset by me
 
 ## Make it Your Own
 
-- I'm making my own art assets.
-- I'm also using a steering behavior not discussed in class, flow field following.
+- I made my own art assets.
 
 ## Known Issues
 
