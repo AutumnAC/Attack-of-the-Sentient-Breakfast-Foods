@@ -68,7 +68,7 @@ The pancake roves the play area as a pack with other pancakes and will chase aft
 - Flocking: The pancake will flock with other pancakes.
 - Wander: The pancake will wander around the play area.
 - Bounds: The pancake will stay in bounds.
-- Path following: A stretch goal would be to add path following.
+- Flow field/path following: A stretch goal would be to add path following or flow field following.
 - Obstacles
     - Pancakes will avoid syrup in this state.
 - Seperation
