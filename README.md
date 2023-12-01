@@ -39,7 +39,7 @@ The waffle will wander around the screen randomly and avoid the evil pancakes at
    
 ### Flee
 
-**Objective:** The waffle wants to avoid getting eaten by a pancake.
+**Objective:** The waffle wants to avoid getting eaten by a pancake. The waffle turns blue when in this state.
 
 #### Steering Behaviors
 
@@ -81,7 +81,7 @@ The pancake roves the play area as a pack with other pancakes and will chase aft
    
 ### Seek
 
-**Objective:** The pancake will try to catch up to a waffle and collide with it.
+**Objective:** The pancake will try to catch up to a waffle and collide with it. The pancake turns red when in this state.
 
 #### Steering Behaviors
 
@@ -91,7 +91,7 @@ The pancake roves the play area as a pack with other pancakes and will chase aft
 - Obstacles
     - Pancakes will avoid syrup in this state.
 - Seperation
-    - The pancake will separate from other pancakes.   
+    - The pancake will separate from other pancakes.
 
 #### State Transistions
 
