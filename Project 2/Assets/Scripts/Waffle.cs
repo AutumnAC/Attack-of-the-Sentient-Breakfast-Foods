@@ -54,6 +54,9 @@ public class Waffle : Agent
                 // Find the closest pancake -- later, this needs to be modified to be limited to a range
                 target = FindClosestPancake().gameObject;
 
+                // Change the color to blue
+                spriteRenderer.color = Color.blue;
+
                 // If there is a target
                 if (target != null)
                 {
@@ -81,6 +84,8 @@ public class Waffle : Agent
         // Add the bounds force to the ultimate force
         ultimaForce += boundsForce;
 
+        ultimaForce += AvoidObstacles() * obstaclesScalar;
+
         // Add the scaled separation force to the ultimate force
         ultimaForce += SeparateWaffles() * separateScalar;
 
@@ -101,12 +106,12 @@ public class Waffle : Agent
     /// <summary>
     /// Draws gizmos for a few key vectors.
     /// </summary>
-    private void OnDrawGizmos()
+    /*private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.position + wanderForce);
 
         Gizmos.color = Color.black;
         Gizmos.DrawLine(transform.position, transform.position + boundsForce);
-    }
+    }*/
 }

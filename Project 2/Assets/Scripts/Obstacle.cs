@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour
 {
-    [SerializeField] private float radius = .8f;
+    [SerializeField] private float radius;
 
     public float Radius
     {

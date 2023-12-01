@@ -50,6 +50,11 @@ public class PhysicsObject : MonoBehaviour
         get { return velocity; }
     }
 
+    public float MaxSpeed
+    {
+        get { return maxSpeed; }
+    }
+
     public Vector3 ScreenMax
     {
         get { return screenMax; }

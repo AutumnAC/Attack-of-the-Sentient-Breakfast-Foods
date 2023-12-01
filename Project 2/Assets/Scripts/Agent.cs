@@ -18,6 +18,14 @@ public abstract class Agent : MonoBehaviour
     // Sprite renderer
     protected SpriteRenderer spriteRenderer;
 
+
+    // Obstacle avoidance
+    protected List<Vector3> foundObstacles = new List<Vector3>(); // this is for debugging purposes only
+
+    [SerializeField] protected float obstaclesScalar = 1f;
+
+    [SerializeField] protected float obstacleAvoidTime = 2f;
+
     // Vector for wander force
     protected Vector3 wanderForce;
 
@@ -372,6 +380,68 @@ public abstract class Agent : MonoBehaviour
         return FlowField.Instance.GetFlowFieldPosition(transform.position);
     }
 
+    protected Vector3 AvoidObstacles()
+    {
+        Vector3 totalAvoidForce = Vector3.zero;
+
+        foundObstacles.Clear();
+
+        foreach(Obstacle obstacle in Manager.Instance.obstacles)
+        {
+            Vector3 agentToObstacle = obstacle.transform.position - transform.position;
+            float rightDot = 0;
+            float forwardDot = 0;
+
+            forwardDot = Vector3.Dot(physicsObject.Velocity.normalized, agentToObstacle); // this is the magnitude
+
+            // If in front of the agent
+            if (forwardDot >= -obstacle.Radius)
+            {
+                // Is it within the box in front of us?
+
+                Vector3 futurePos = CalcFuturePosition(obstacleAvoidTime);
+
+                float dist = Vector3.Distance(transform.position, futurePos) + physicsObject.Radius;
+
+
+                Vector3 steeringForce = transform.right * (forwardDot / dist) * physicsObject.MaxSpeed;
+
+                if (forwardDot <= dist + obstacle.Radius)
+                {
+                    // How far left/right?
+                    rightDot = Vector3.Dot(transform.right, agentToObstacle); // project onto rght axis instead
+
+                    // Is the obstacle within the safe box width?
+                    if (Mathf.Abs(rightDot) <= physicsObject.Radius + obstacle.Radius)
+                    {
+                        // If left, steer right
+                        if (rightDot < 0)
+                        {
+                            totalAvoidForce += steeringForce;
+                        }
+
+                        // If right, steer left
+                        else
+                        {
+                            totalAvoidForce -= steeringForce;
+                        }
+
+                        // Add the obstacle to the list of found obstacles
+                        foundObstacles.Add(obstacle.transform.position);
+                    }
+
+                }
+                // Otherwise, it's too far away
+
+
+            }
+            // Otherwise, it's behind the agent
+
+        }
+
+        return totalAvoidForce;
+    }
+
     /// <summary>
     /// Helper method that calculates the distance squared between two vectors.
     /// </summary>
@@ -403,7 +473,7 @@ public abstract class Agent : MonoBehaviour
         Gizmos.color = Color.green;
 
         // Change perspective of stuff being drawn to match the position and rotation of transform
-        Gizmos.matrix = transform.localToWorldMatrix;
+        Gizmos.matrix = transform.localToWorldMatrix; // we're telling the gizmo to draw itself shifted to define the world based on the transform. and the transform says to scale it by 1.5!
         Gizmos.DrawWireCube(boxCenter, boxSize);
         Gizmos.matrix = Matrix4x4.identity;
 
@@ -413,9 +483,9 @@ public abstract class Agent : MonoBehaviour
         //
         Gizmos.color = Color.yellow;
 
-        /*foreach (Vector3 pos in foundObstacles)
+        foreach (Vector3 pos in foundObstacles)
         {
             Gizmos.DrawLine(transform.position, pos);
-        }*/
+        }
     }    
 }
