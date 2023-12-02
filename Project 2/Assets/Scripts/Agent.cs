@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -199,7 +200,7 @@ public abstract class Agent : MonoBehaviour
         Vector3 futurePosOffset = CalcFuturePosition(time);
 
         // Get a random angle by adding on a bit to what we used last time
-        currentWanderAngle += Random.Range(-wanderRange, wanderRange);
+        currentWanderAngle += UnityEngine.Random.Range(-wanderRange, wanderRange);
 
         // Stay inside a given max range
         if (currentWanderAngle > maxWanderAngle)
@@ -380,38 +381,52 @@ public abstract class Agent : MonoBehaviour
         return FlowField.Instance.GetFlowFieldPosition(transform.position);
     }
 
+    /// <summary>
+    /// Steers the agent away from obstacles.
+    /// </summary>
+    /// <returns>The steering force away from the obstacles.</returns>
     protected Vector3 AvoidObstacles()
     {
+        // Get the total force to avoid
         Vector3 totalAvoidForce = Vector3.zero;
 
+        // Clear the list of found obstacles
         foundObstacles.Clear();
 
-        foreach(Obstacle obstacle in Manager.Instance.obstacles)
+        // Loop through all the obstacles
+        foreach(Obstacle obstacle in Manager.Instance.Obstacles)
         {
+            // Get the vector from the obstacle to the agent
             Vector3 agentToObstacle = obstacle.transform.position - transform.position;
+
+            // Declare the right dot product to be used later
             float rightDot = 0;
-            float forwardDot = 0;
 
-            forwardDot = Vector3.Dot(physicsObject.Velocity.normalized, agentToObstacle); // this is the magnitude
+            // Get the forward dot product
+            float forwardDot = Vector3.Dot(physicsObject.Velocity.normalized, agentToObstacle);
 
-            // If in front of the agent
+            // If the obstacle is in front of the agent
             if (forwardDot >= -obstacle.Radius)
             {
                 // Is it within the box in front of us?
 
+                // Get the future position
                 Vector3 futurePos = CalcFuturePosition(obstacleAvoidTime);
 
+                // Get the distance between the agent and its future position
                 float dist = Vector3.Distance(transform.position, futurePos) + physicsObject.Radius;
 
+                // Get a steering force
+                Debug.Log(forwardDot);
+                Vector3 steeringForce = transform.right * (dist / forwardDot) * physicsObject.MaxSpeed /*-- was making the force too strong*/;
 
-                Vector3 steeringForce = transform.right * (forwardDot / dist) * physicsObject.MaxSpeed;
-
+                // If the object is within the distance between the agent and its future position
                 if (forwardDot <= dist + obstacle.Radius)
                 {
-                    // How far left/right?
-                    rightDot = Vector3.Dot(transform.right, agentToObstacle); // project onto rght axis instead
+                    // Get the right dot product by projecting onto the right axis
+                    rightDot = Vector3.Dot(transform.right, agentToObstacle);
 
-                    // Is the obstacle within the safe box width?
+                    // If the obstacle is within the safe box width
                     if (Mathf.Abs(rightDot) <= physicsObject.Radius + obstacle.Radius)
                     {
                         // If left, steer right

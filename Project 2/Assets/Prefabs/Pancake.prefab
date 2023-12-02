@@ -121,8 +121,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   physicsObject: {fileID: 7949740958407132850}
-  maxSpeed: 2
-  maxForce: 2
+  maxSpeed: 4
+  maxForce: 4
+  obstaclesScalar: 4
+  obstacleAvoidTime: 4
   wanderScalar: 1
   wanderAngle: 0
   maxWanderAngle: 360

@@ -13,7 +13,7 @@ public class Manager : Singleton<Manager>
     [SerializeField] private List<Pancake> pancakes;
 
     // List of obstacles
-    public List<Obstacle> obstacles = new List<Obstacle>();
+    [SerializeField] private List<Obstacle> obstacles = new List<Obstacle>();
 
     // Number of each type of agent to spawn in the scene
     [SerializeField] private int waffleNumber;
@@ -51,6 +51,11 @@ public class Manager : Singleton<Manager>
     public List<Pancake> Pancakes
     {
         get { return pancakes; }
+    }
+
+    public List<Obstacle> Obstacles
+    {
+        get { return obstacles; }
     }
 
     public Camera MainCamera

@@ -84,6 +84,7 @@ public class Waffle : Agent
         // Add the bounds force to the ultimate force
         ultimaForce += boundsForce;
 
+        // Add the obstacle avoidance force to the ultimate force
         ultimaForce += AvoidObstacles() * obstaclesScalar;
 
         // Add the scaled separation force to the ultimate force
