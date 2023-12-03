@@ -445,8 +445,8 @@ MonoBehaviour:
   - {fileID: 2135506906}
   - {fileID: 1476100045}
   - {fileID: 817298265}
-  waffleNumber: 0
-  pancakeNumber: 20
+  waffleNumber: 20
+  pancakeNumber: 5
   wafflePrefab: {fileID: 5912067745649990370, guid: a172424b7e3a46a47bf763438658d9e6, type: 3}
   pancakePrefab: {fileID: 2924947148180598311, guid: 2675df30e3540d246ab060640ce46e9c, type: 3}
   mainCamera: {fileID: 519420031}

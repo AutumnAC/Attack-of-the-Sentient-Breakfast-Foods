@@ -418,7 +418,7 @@ public abstract class Agent : MonoBehaviour
                 float dist = Vector3.Distance(transform.position, futurePos) + physicsObject.Radius;
 
                 // Get a steering force
-                Vector3 steeringForce = transform.right * (dist / forwardDot) * physicsObject.MaxSpeed;
+                Vector3 steeringForce = transform.right * (dist / forwardDot) * physicsObject.MaxSpeed /* commenting out the maxSpeed made everything worse somehow */;
 
                 // If the object is within the distance between the agent and its future position
                 if (forwardDot <= dist + obstacle.Radius)
