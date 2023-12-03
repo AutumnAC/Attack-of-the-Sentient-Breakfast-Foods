@@ -26,7 +26,6 @@ public class Waffle : Agent
         // If the waffle's collision flag was turned on, destroy it
         if (physicsObject.IsColliding)
         {
-            //Manager.Instance.Waffles.Remove(this);
             Destroy(gameObject);
         }
 
@@ -89,7 +88,6 @@ public class Waffle : Agent
 
         // Add the scaled separation force to the ultimate force
         ultimaForce += SeparateWaffles() * separateScalar;
-
     }
 
     /// <summary>
@@ -102,6 +100,12 @@ public class Waffle : Agent
 
         // Initialize a random angle for the wander angle
         wanderAngle = UnityEngine.Random.Range(-maxWanderAngle, maxWanderAngle);
+
+        // Initialize a starting velocity so that the velocity is not zero to begin with
+        physicsObject.Velocity = Vector3.up;
+
+        // Set up the sprite renderer
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     /// <summary>

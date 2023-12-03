@@ -19,49 +19,48 @@ public abstract class Agent : MonoBehaviour
     // Sprite renderer
     protected SpriteRenderer spriteRenderer;
 
-
     // Obstacle avoidance
     protected List<Vector3> foundObstacles = new List<Vector3>(); // this is for debugging purposes only
 
-    [SerializeField] protected float obstaclesScalar = 1f;
+    [SerializeField] protected float obstaclesScalar;
 
-    [SerializeField] protected float obstacleAvoidTime = 2f;
+    [SerializeField] protected float obstacleAvoidTime;
 
     // Vector for wander force
     protected Vector3 wanderForce;
 
     // Scalar value for wander
-    [SerializeField] protected float wanderScalar = 1f;
+    [SerializeField] protected float wanderScalar;
 
     // The angle for wandering
-    [SerializeField] protected float wanderAngle = 0f;
+    [SerializeField] protected float wanderAngle;
 
     // The maximum angle for wandering
-    [SerializeField] protected float maxWanderAngle = 360f;
+    [SerializeField] protected float maxWanderAngle;
 
     // Vector for flee force
     protected Vector3 fleeForce;
 
     // Scalar value for fleeing
-    [SerializeField] protected float fleeScalar = 1f;
+    [SerializeField] protected float fleeScalar;
 
     // Scalar for seek force
-    [SerializeField] protected float seekScalar = 1f;
+    [SerializeField] protected float seekScalar;
 
     // Vector for stay-in-bounds force
     protected Vector3 boundsForce;
 
     // Scalar for bounds force
-    [SerializeField] protected float boundsScalar = 0f;
-
-    // Scalar for separation force
-    [SerializeField] protected float separateScalar = 1f;
+    [SerializeField] protected float boundsScalar;
 
     // Amount of time for bounds
-    [SerializeField] protected float boundsTime = 1f;
+    [SerializeField] protected float boundsTime;
 
-    // Scalar for flow field force
-    [SerializeField] protected float flowFieldScalar = 1f;
+    // Scalar for separation force
+    [SerializeField] protected float separateScalar;
+
+    // Scalar for flow field force -- currently unused
+    //[SerializeField] protected float flowFieldScalar;
 
     // The sum total of all the forces
     protected Vector3 ultimaForce;
@@ -402,6 +401,8 @@ public abstract class Agent : MonoBehaviour
             // Declare the right dot product to be used later
             float rightDot = 0;
 
+            //float forwardDot = 0;
+
             // Get the forward dot product
             float forwardDot = Vector3.Dot(physicsObject.Velocity.normalized, agentToObstacle);
 
@@ -417,8 +418,7 @@ public abstract class Agent : MonoBehaviour
                 float dist = Vector3.Distance(transform.position, futurePos) + physicsObject.Radius;
 
                 // Get a steering force
-                Debug.Log(forwardDot);
-                Vector3 steeringForce = transform.right * (dist / forwardDot) * physicsObject.MaxSpeed /*-- was making the force too strong*/;
+                Vector3 steeringForce = transform.right * (dist / forwardDot) * physicsObject.MaxSpeed;
 
                 // If the object is within the distance between the agent and its future position
                 if (forwardDot <= dist + obstacle.Radius)

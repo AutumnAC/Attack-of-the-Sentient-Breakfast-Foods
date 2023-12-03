@@ -131,8 +131,7 @@ MonoBehaviour:
   fleeScalar: 1
   seekScalar: 1
   boundsScalar: 5
+  boundsTime: 3
   separateScalar: 3
-  boundsTime: 1
-  flowFieldScalar: 1
   separateRange: 1
   target: {fileID: 0}

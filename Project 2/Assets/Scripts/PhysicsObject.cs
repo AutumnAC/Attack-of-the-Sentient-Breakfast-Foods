@@ -48,6 +48,7 @@ public class PhysicsObject : MonoBehaviour
     public Vector3 Velocity
     {
         get { return velocity; }
+        set { velocity = value; }
     }
 
     public float MaxSpeed
