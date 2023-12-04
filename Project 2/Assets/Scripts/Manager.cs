@@ -103,9 +103,10 @@ public class Manager : Singleton<Manager>
         centerPoint = GetCenterPoint();
         sharedDirection = GetSharedDirection();
 
-        // Check each physics object against each physics object
+        // Check each waffle
         for (int x = 0; x < waffles.Count; x++)
         {
+            // Check each waffle against each pancake
             for (int y = 0; y < pancakes.Count; y++)
             {
                 //Debug.Log("x, y: " + x + ", " + y);
@@ -133,6 +134,8 @@ public class Manager : Singleton<Manager>
                     pancakes[y].PhysicsObject.IsColliding = true;
                 }
             }
+
+
         }
     }
 
