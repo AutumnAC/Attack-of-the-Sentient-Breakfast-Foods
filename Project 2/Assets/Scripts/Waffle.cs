@@ -101,9 +101,6 @@ public class Waffle : Agent
         // Initialize a random angle for the wander angle
         wanderAngle = UnityEngine.Random.Range(-maxWanderAngle, maxWanderAngle);
 
-        // Initialize a starting velocity so that the velocity is not zero to begin with
-        physicsObject.Velocity = Vector3.up;
-
         // Set up the sprite renderer
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
