@@ -14,61 +14,60 @@ public enum WaffleStates
 
 public class Waffle : Agent
 {
-    // The target for Flee
-    [SerializeField] private GameObject target;
-
     // State enum
     private WaffleStates currentState;
 
-
+    /// <summary>
+    /// Calculates the steering forces for the waffle -- called in parent's Update() function.
+    /// </summary>
     protected override void CalcSteeringForces()
     {
-        // If the waffle's collision flag was turned on, destroy it
-        if (physicsObject.IsColliding)
+        // If the waffle's pancake collision flag was turned on, destroy it
+        if (physicsObject.IsCollidingWithPancake)
         {
             Destroy(gameObject);
         }
 
-
-        // Check the state -- does very little at present
+        // Behave differently depending on the state
         switch (currentState)
         {
-            // If the waffle is wandering
+            // Wander
             case WaffleStates.Wander:
 
+                // Set the sprite color to normal
+                spriteRenderer.color = Color.white;
+
                 // Get a wander force
-                wanderForce = Wander(ref wanderAngle, 20f, .2f, .5f);
+                wanderForce = Wander(ref wanderAngle, 20f, .2f, .5f) * wanderScalar;
 
-                // Multiply it by its weight
-                wanderForce *= wanderScalar;
-
-                // Add it to the wander force
+                // Add it to the ultimate force
                 ultimaForce += wanderForce;
+                
+                // If there is a pancake in range
+                if (FindPancakesInRange(visionRadius).Count > 0)
+                {
+                    // Flee
+                    currentState = WaffleStates.Flee;
+                }
 
                 break;
 
-            // If the waffle is fleeing -- state is currently never reached
+            // Flee -- waffle flees from all pancakes in range
             case WaffleStates.Flee:
-
-                // Find the closest pancake -- later, this needs to be modified to be limited to a range
-                target = FindClosestPancake().gameObject;
 
                 // Change the color to blue
                 spriteRenderer.color = Color.blue;
 
-                // If there is a target
-                if (target != null)
-                {
-                    // Flee from the pancake
-                    fleeForce = Flee(target.GetComponent<PhysicsObject>()) * fleeScalar;
+                // Get all the pancakes in range
+                fleeForce = FleeFromClosePancakes(visionRadius) * fleeScalar;
 
-                    // Add the force of the fleeing to the ultimate force
-                    ultimaForce += fleeForce;
-                }
+                // Add the force of the fleeing to the ultimate force
+                ultimaForce += fleeForce;
 
-                // If there is no pancake, go back to wandering
-                else
+                // If there is no longer a pancake in range
+                if (FindPancakesInRange(visionRadius).Count == 0)
                 {
+                    // Wander
                     currentState = WaffleStates.Wander;
                 }
 
@@ -103,17 +102,24 @@ public class Waffle : Agent
 
         // Set up the sprite renderer
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // Initialize maxForce
+        maxForce = defaultMaxForce;
     }
 
     /// <summary>
     /// Draws gizmos for a few key vectors.
     /// </summary>
-    /*private void OnDrawGizmos()
+    private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.position + wanderForce);
 
         Gizmos.color = Color.black;
         Gizmos.DrawLine(transform.position, transform.position + boundsForce);
-    }*/
+
+        // Draw a sphere based on the bounding circle collision
+        Gizmos.DrawWireSphere(transform.position, visionRadius);
+
+    }
 }

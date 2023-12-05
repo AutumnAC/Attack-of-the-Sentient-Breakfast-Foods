@@ -19,10 +19,6 @@ public class PhysicsObject : MonoBehaviour
     // Mass of object
     [SerializeField] private float mass = 1;
 
-    // Friction
-    [SerializeField] private bool useFriction;
-    [SerializeField] private float frictionCoeffecient;
-
     // Maximum speed
     [SerializeField] private float maxSpeed = 10;
 
@@ -34,7 +30,8 @@ public class PhysicsObject : MonoBehaviour
 
     // For collisions
     [SerializeField] private float radius;
-    private bool isColliding;
+    private bool isCollidingWithPancake;
+    private bool isCollidingWithObstacle;
 
 
     /* PROPERTIES */
@@ -66,10 +63,16 @@ public class PhysicsObject : MonoBehaviour
         get { return radius; }
     }
 
-    public bool IsColliding
+    public bool IsCollidingWithPancake
     {
-        get { return isColliding; }
-        set { isColliding = value; }
+        get { return isCollidingWithPancake; }
+        set { isCollidingWithPancake = value; }
+    }
+
+    public bool IsCollidingWithObstacle
+    {
+        get { return isCollidingWithObstacle; }
+        set { isCollidingWithObstacle = value; }
     }
 
     public Camera MainCamera
@@ -95,12 +98,6 @@ public class PhysicsObject : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Calculate friction, if the object uses friction
-        if (useFriction)
-        {
-            ApplyFriction(frictionCoeffecient);
-        }
-
         // Calculate the velocity for this frame
         velocity += acceleration * Time.deltaTime;
 
@@ -130,25 +127,6 @@ public class PhysicsObject : MonoBehaviour
     public void ApplyForce(Vector3 force)
     {
         acceleration += force / mass;
-    }
-
-    /// <summary>
-    /// Applies friction to the velocity.
-    /// </summary>
-    /// <param name="coeff">The friction coeffecient.</param>
-    private void ApplyFriction(float coeff)
-    {
-        // Make the friction the reverse of the velocity
-        Vector3 friction = velocity * -1;
-
-        // Normalize it
-        friction.Normalize();
-
-        // Multiply it by the friction coeffecient
-        friction = friction * coeff;
-
-        // Apply it
-        ApplyForce(friction);
     }
 
     /// <summary>

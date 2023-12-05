@@ -15,9 +15,13 @@ public abstract class Agent : MonoBehaviour
     // Maximum speed and force
     [SerializeField] protected float maxSpeed;
     [SerializeField] protected float maxForce;
+    [SerializeField] protected float defaultMaxForce;
 
     // Sprite renderer
     protected SpriteRenderer spriteRenderer;
+
+    // The radius for seeing other agents for seeking or fleeing
+    [SerializeField] protected float visionRadius;
 
     // Obstacle avoidance
     protected List<Vector3> foundObstacles = new List<Vector3>(); // this is for debugging purposes only
@@ -84,6 +88,28 @@ public abstract class Agent : MonoBehaviour
     {
         // Start with the ultimate force at zero
         ultimaForce = Vector3.zero;
+
+        // If the agent's obstacle collision was turned on, slow the agent down -- currently not working for unknown reasons
+        if (physicsObject.IsCollidingWithObstacle && maxForce == defaultMaxForce)
+        {
+            maxForce = maxForce / 100;
+
+            //Debug.Log("Well, we're here...");
+        }
+        else
+        {
+            // If the max speed isn't already at the default
+            if (maxSpeed != defaultMaxForce)
+            {
+                // Set it back to the default
+                maxForce = defaultMaxForce;
+
+                //Debug.Log("We're free!");
+
+                // Apply a force in the direction of the velocity to give the agent a boost
+                //physicsObject.ApplyForce(physicsObject.Velocity);
+            }
+        }
 
         // Calculate the steering forces (handled in the child classes)
         CalcSteeringForces();
@@ -288,7 +314,7 @@ public abstract class Agent : MonoBehaviour
     /// Helper method that calculates the separation force between two agents.
     /// </summary>
     /// <param name="a">The agent to separate from.</param>
-    /// <returns></returns>
+    /// <returns>The separation force between the two agents.</returns>
     private Vector3 Separate(Agent a)
     {
         Vector3 separateForce = Vector3.zero;
@@ -310,7 +336,7 @@ public abstract class Agent : MonoBehaviour
     /// Gets the waffle closest to the agent.
     /// </summary>
     /// <returns>The nearest waffle.</returns>
-    protected Waffle FindClosestWaffle(int radius)
+    protected Waffle FindClosestWaffle(float radius)
     {
         // Set the minimum distance to as high as possible
         float minDist = Mathf.Infinity;
@@ -325,7 +351,7 @@ public abstract class Agent : MonoBehaviour
             float dist = CalcSquaredDistance(transform.position, waffle.transform.position);
 
             // If that distance is less than the minimum distance
-            if (dist < minDist && dist < radius)
+            if (dist < minDist && dist < Math.Pow(radius, 2))
             {
                 // Set the min distance equal the distance between the two, and set the nearest waffle to the current waffle
                 minDist = dist;
@@ -339,35 +365,60 @@ public abstract class Agent : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets the pancake closest to the agent.
+    /// Gets all the pancakes within a certain radius of the agent.
     /// </summary>
-    /// <returns>The nearest pancake.</returns>
-    protected Pancake FindClosestPancake()
+    /// <returns>A list of nearby pancakes.</returns>
+    protected List<Pancake> FindPancakesInRange(float radius)
     {
-        // Set the minimum distance to as high as possible
-        float minDist = Mathf.Infinity;
-
         // Set the nearest game object to null
-        Pancake nearest = null;
+        List<Pancake> pancakesInRange = new List<Pancake>();
 
-        // Loop through each waffle
+        // Loop through each pancake
         foreach (Pancake pancake in Manager.Instance.Pancakes)
         {
             // Calculate the distance between the agent and the pancake
             float dist = CalcSquaredDistance(transform.position, pancake.transform.position);
 
-            // If that distance is less than the minimum distance
-            if (dist < minDist)
+            // If that distance is less than the radius
+            if (dist < Math.Pow(radius, 2))
             {
-                // Set the min distance equal the distance between the two, and set the nearest pancake to the current pancake
-                minDist = dist;
-                nearest = pancake;
+                // Add it to the list of pancakes in range
+                pancakesInRange.Add(pancake);
             }
 
         }
 
-        // Return the nearest pancake
-        return nearest;
+        // Return the list
+        return pancakesInRange;
+    }
+
+    /// <summary>
+    /// Gets the pancakes in range and flees from them, weighted proportional to distance.
+    /// </summary>
+    /// <param name="radius">The range being fled from.</param>
+    /// <returns>A steering force fleeing from the pancakes.</returns>
+    protected Vector3 FleeFromClosePancakes(float radius)
+    {
+        Vector3 fleeForce = Vector3.zero;
+
+        // Get the list of pancakes -- should it instead be passed in from Waffle so that FindPancakesInRange is called less?
+        List<Pancake> pancakesInRange = FindPancakesInRange(radius);
+
+        // Loop through all the pancakes in the list
+        foreach (Pancake pancake in pancakesInRange)
+        {
+            // Get the square of the distance between the two agents
+            float dist = CalcSquaredDistance(transform.position, pancake.transform.position);
+
+            // As long as the distance is less than the given radius
+            if (dist < Math.Pow(radius, 2))
+            {
+                // Flee from the agent proportional to its distance
+                fleeForce = Flee(pancake.physicsObject) * radius / dist;
+            }
+        }
+
+        return fleeForce;
     }
 
     /// <summary>
@@ -400,8 +451,6 @@ public abstract class Agent : MonoBehaviour
 
             // Declare the right dot product to be used later
             float rightDot = 0;
-
-            //float forwardDot = 0;
 
             // Get the forward dot product
             float forwardDot = Vector3.Dot(physicsObject.Velocity.normalized, agentToObstacle);

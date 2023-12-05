@@ -103,8 +103,6 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   acceleration: {x: 0, y: 0, z: 0}
   mass: 2
-  useFriction: 0
-  frictionCoeffecient: 0.96
   maxSpeed: 10
   mainCamera: {fileID: 0}
   radius: 0.4
@@ -123,6 +121,8 @@ MonoBehaviour:
   physicsObject: {fileID: 4757581319871036211}
   maxSpeed: 5
   maxForce: 1
+  defaultMaxForce: 1
+  visionRadius: 3
   obstaclesScalar: 1
   obstacleAvoidTime: 1
   wanderScalar: 1
