@@ -49,6 +49,7 @@ public class Waffle : Agent
                     // Flee
                     currentState = WaffleStates.Flee;
                 }
+                // Otherwise, continue to wander
 
                 break;
 
@@ -70,6 +71,7 @@ public class Waffle : Agent
                     // Wander
                     currentState = WaffleStates.Wander;
                 }
+                // Otherwise, continue to flee from the pancakes
 
                 break;
         }
@@ -92,11 +94,13 @@ public class Waffle : Agent
     /// <summary>
     /// Draws gizmos for a few key vectors.
     /// </summary>
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
+        // Draw the wander force
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.position + wanderForce);
 
+        // Draw the bounds force
         Gizmos.color = Color.black;
         Gizmos.DrawLine(transform.position, transform.position + boundsForce);
 

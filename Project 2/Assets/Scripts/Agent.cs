@@ -22,15 +22,49 @@ public abstract class Agent : MonoBehaviour
     // The radius for seeing other agents for seeking or fleeing
     [SerializeField] protected float visionRadius;
 
-    // Obstacle avoidance
-    protected List<Vector3> foundObstacles = new List<Vector3>(); // this is for debugging purposes only
+    // The sum total of all the forces, to be applied to the agent
+    protected Vector3 ultimaForce;
+
+
+    // STAYING IN BOUNDS
+
+    // Vector for bounds force
+    protected Vector3 boundsForce;
+
+    // The scalar to increase the bounds force by
+    [SerializeField] protected float boundsScalar;
+
+    // The time to look ahead for bounds
+    [SerializeField] protected float boundsTime;
+
+
+    // SEPARATION
+
+    // The scalar to increase the separation by
+    [SerializeField] protected float separateScalar;
+
+    // The range for separation
+    [SerializeField] float separateRange;
+
+
+    // OBSTACLE AVOIDANCE
+
+    // List of found obstacles -- for debugging purposes only
+    protected List<Vector3> foundObstacles = new List<Vector3>();
+
+    // The scalar to increase the obstacle avoidance force by
     [SerializeField] protected float obstaclesScalar;
+    
+    // The time to look ahead for avoiding obstacles
     [SerializeField] protected float obstacleAvoidTime;
+
+
+    // WANDER
 
     // Vector for wander force
     protected Vector3 wanderForce;
 
-    // Scalar value for wander
+    // The scalar to increase the wander force by
     [SerializeField] protected float wanderScalar;
 
     // The angle for wandering
@@ -39,44 +73,32 @@ public abstract class Agent : MonoBehaviour
     // The maximum angle for wandering
     [SerializeField] protected float maxWanderAngle;
 
+
+    // FLEE
+
     // Vector for flee force
     protected Vector3 fleeForce;
 
-    // Scalar value for fleeing
+    // The scalar to increase the flee force by
     [SerializeField] protected float fleeScalar;
 
-    // Scalar for seek force
+
+    // SEEK
+
+    // The scalar to increase the seek force by
     [SerializeField] protected float seekScalar;
 
-    // Vector for stay-in-bounds force
-    protected Vector3 boundsForce;
 
-    // Scalar for bounds force
-    [SerializeField] protected float boundsScalar;
-
-    // Amount of time for bounds
-    [SerializeField] protected float boundsTime;
-
-    // Scalar for separation force
-    [SerializeField] protected float separateScalar;
-
-    // Scalar for flow field force -- currently unused
-    //[SerializeField] protected float flowFieldScalar;
-
-    // The sum total of all the forces
-    protected Vector3 ultimaForce;
-
-    // Range
-    [SerializeField] float separateRange;
-
+    // Property for the physics object
     public PhysicsObject PhysicsObject
     {
         get { return physicsObject; }
+
+        // Get-only property
     }
 
 
     /* METHODS */
-
 
     private void Awake()
     {
@@ -226,8 +248,10 @@ public abstract class Agent : MonoBehaviour
             currentWanderAngle = -maxWanderAngle;
         }
 
-        // Where would that displacement vector end?
+        // Set the target offset to the future position initially
         Vector3 targetOffset = futurePosOffset;
+
+        // Adjust the target position by a few degrees
         targetOffset.x += Mathf.Cos(currentWanderAngle * Mathf.Deg2Rad) * radius;
         targetOffset.y += Mathf.Sin(currentWanderAngle * Mathf.Deg2Rad) * radius;
 
@@ -327,10 +351,14 @@ public abstract class Agent : MonoBehaviour
     /// <returns>A steering force fleeing from the pancakes.</returns>
     protected Vector3 FleeFromClosePancakes(float radius)
     {
-        Vector3 fleeForce = Vector3.zero;
+        FleeFromClosePancakes(radius, FindPancakesInRange(radius));
 
-        // Get the list of pancakes -- should it instead be passed in from Waffle so that FindPancakesInRange is called less?
-        List<Pancake> pancakesInRange = FindPancakesInRange(radius);
+        return fleeForce;
+    }
+
+    protected Vector3 FleeFromClosePancakes(float radius, List<Pancake> pancakesInRange)
+    {
+        Vector3 fleeForce = Vector3.zero;
 
         // Loop through all the pancakes in the list
         foreach (Pancake pancake in pancakesInRange)
@@ -376,8 +404,6 @@ public abstract class Agent : MonoBehaviour
             // If the obstacle is in front of the agent
             if (forwardDot >= -obstacle.Radius)
             {
-                // Is it within the box in front of us?
-
                 // Get the future position
                 Vector3 futurePos = CalcFuturePosition(obstacleAvoidTime);
 
@@ -414,7 +440,6 @@ public abstract class Agent : MonoBehaviour
 
                 }
                 // Otherwise, it's too far away
-
 
             }
             // Otherwise, it's behind the agent
@@ -462,16 +487,16 @@ public abstract class Agent : MonoBehaviour
     /// <returns>A list of nearby pancakes.</returns>
     protected List<Pancake> FindPancakesInRange(float radius)
     {
-        // Set the nearest game object to null
+        // Create the list of the pancakes in range
         List<Pancake> pancakesInRange = new List<Pancake>();
 
         // Loop through each pancake
         foreach (Pancake pancake in Manager.Instance.Pancakes)
         {
-            // Calculate the distance between the agent and the pancake
+            // Calculate the squared distance between the agent and the pancake
             float dist = CalcSquaredDistance(transform.position, pancake.transform.position);
 
-            // If that distance is less than the radius
+            // If that distance is less than the radius squared
             if (dist < Math.Pow(radius, 2))
             {
                 // Add it to the list of pancakes in range
@@ -492,16 +517,6 @@ public abstract class Agent : MonoBehaviour
     public Vector3 CalcFuturePosition(float time)
     {
         return physicsObject.Velocity * time + transform.position;
-    }
-
-    /// <summary>
-    /// Experimental method for flow field following. Currently unfinished.
-    /// </summary>
-    protected Vector3 FollowFlowField()
-    {
-        //Vector3[][] flowField = new Vector3[columns][];
-
-        return FlowField.Instance.GetFlowFieldPosition(transform.position);
     }
 
     /// <summary>

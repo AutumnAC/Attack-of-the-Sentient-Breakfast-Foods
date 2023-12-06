@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 // Enum for the pancake's state
 public enum PancakeStates
 {
@@ -11,16 +10,15 @@ public enum PancakeStates
     Seek,
 }
 
-
 // Class purpose: Defines behavior for the Pancake agent
 
 public class Pancake : Agent
 {
-    // The target to be used in Seek
-    [SerializeField] private Waffle target;
-
     // State enum
     private PancakeStates currentState;
+
+    // The target to be used in Seek
+    [SerializeField] private Waffle target;
 
     /// <summary>
     /// Calculates the steering forces that affect the pancake.
@@ -36,23 +34,17 @@ public class Pancake : Agent
                 // Set the sprite color to normal
                 spriteRenderer.color = Color.white;
 
-                // Follow the flow field -- experimental code
-                //ultimaForce += FollowFlowField() * flowFieldScalar;
-
                 // Get a wander force
-                wanderForce = Wander(ref wanderAngle, 20f, .2f, .5f);
+                wanderForce = Wander(ref wanderAngle, 20f, .2f, .5f) * wanderScalar;
 
-                // Multiply it by its weight
-                wanderForce *= wanderScalar;
-
-                // Add it to the wander force
+                // Add it to the ultimate force
                 ultimaForce += wanderForce;
 
                 // Flocking -- seek the center point and move towards the shared direction
                 ultimaForce += Seek(Manager.Instance.CenterPoint);
                 ultimaForce += Manager.Instance.SharedDirection * physicsObject.MaxSpeed - physicsObject.Velocity;
 
-                // Find the closest waffle
+                // Find the closest waffle in range
                 target = FindClosestWaffle(visionRadius);
 
                 // If there is a target in range, switch states
@@ -70,21 +62,18 @@ public class Pancake : Agent
                 // Set the sprite color to red
                 spriteRenderer.color = Color.red;
 
-                // Find the closest waffle
+                // Seek the target
+                ultimaForce += Seek(target.transform.position) * seekScalar;
+
+                // Check again to find the closest waffle in range
                 target = FindClosestWaffle(visionRadius);
 
-                // As long as there is a target
-                if (target != null)
-                {
-                    // Seek it
-                    ultimaForce += Seek(target.transform.position) * seekScalar;
-                }
-
                 // If there is no target, go back to patrolling
-                else
+                if (target == null)
                 {
                     currentState = PancakeStates.Flock;
                 }
+                // Otherwise, continue chasing the target
 
                 break;
         }
