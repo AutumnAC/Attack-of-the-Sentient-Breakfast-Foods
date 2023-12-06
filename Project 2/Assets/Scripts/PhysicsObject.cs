@@ -8,7 +8,7 @@ public class PhysicsObject : MonoBehaviour
 {
     /* FIELDS */
 
-    // Pposition, direction, velocity
+    // Position, direction, velocity
     [SerializeField] private Vector3 position;
     [SerializeField] private Vector3 direction;
     [SerializeField] private Vector3 velocity;
@@ -26,15 +26,19 @@ public class PhysicsObject : MonoBehaviour
     private Vector3 screenMax = Vector3.zero;
 
     // Camera
-    [SerializeField] private Camera mainCamera;
+    private Camera mainCamera;
 
-    // For collisions
+    // Radius
     [SerializeField] private float radius;
+
+    // Collision flags
     private bool isCollidingWithPancake;
     private bool isCollidingWithObstacle;
 
 
     /* PROPERTIES */
+
+    // All properties are for the field of the same name
 
     public Vector3 Position
     {
@@ -51,16 +55,28 @@ public class PhysicsObject : MonoBehaviour
     public float MaxSpeed
     {
         get { return maxSpeed; }
+
+        // Get-only property
     }
 
     public Vector3 ScreenMax
     {
         get { return screenMax; }
+
+        // Get-only property
+    }
+
+    public Camera MainCamera
+    {
+        get { return mainCamera; }
+        set { mainCamera = value; }
     }
 
     public float Radius
     {
         get { return radius; }
+
+        // Get-only property
     }
 
     public bool IsCollidingWithPancake
@@ -73,12 +89,6 @@ public class PhysicsObject : MonoBehaviour
     {
         get { return isCollidingWithObstacle; }
         set { isCollidingWithObstacle = value; }
-    }
-
-    public Camera MainCamera
-    {
-        get { return mainCamera; }
-        set { mainCamera = value; }
     }
 
 

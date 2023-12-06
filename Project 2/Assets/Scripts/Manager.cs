@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Class purpose: Manager for handing agent interactions
+// Class purpose: Handles agent interactions and the like.
 
 public class Manager : Singleton<Manager>
 {
@@ -21,7 +21,7 @@ public class Manager : Singleton<Manager>
     [SerializeField] private int waffleNumber;
     [SerializeField] private int pancakeNumber;
 
-    // Prefabs for agents and obstacle
+    // Prefabs for agents and obstacles
     [SerializeField] private Waffle wafflePrefab;
     [SerializeField] private Pancake pancakePrefab;
     [SerializeField] private Obstacle obstaclePrefab;
@@ -29,22 +29,14 @@ public class Manager : Singleton<Manager>
     // The camera
     [SerializeField] private Camera mainCamera;
 
-    // Experimental code for flocking
+    // Center point and shared direction for flocking
     private Vector3 centerPoint = Vector3.zero;
-
     private Vector3 sharedDirection = Vector3.zero;
+
 
     /* PROPERTIES */
 
-    public Vector3 CenterPoint
-    {
-        get { return centerPoint; }
-    }
-
-    public Vector3 SharedDirection
-    {
-        get { return sharedDirection; }
-    }
+    // All properties are for the field of the same name
 
     public List<Waffle> Waffles
     {
@@ -66,35 +58,51 @@ public class Manager : Singleton<Manager>
         get { return mainCamera; }
     }
 
+    public Vector3 CenterPoint
+    {
+        get { return centerPoint; }
+    }
 
-    /* METHODS */
+    public Vector3 SharedDirection
+    {
+        get { return sharedDirection; }
+    }
+
+
+    /* CONSTRUCTOR AND METHODS */
 
     // (Optional) Prevent non-singleton constructor use.
     protected Manager() { }
 
-
+    // Start is called before the first frame update
     private void Start()
     {
         // Spawn in the waffles
         for (int i = 0; i < waffleNumber; i++)
         {
-            // Instantiate the waffle with a random x and y location within the bounds of the screen, and add it to the list
-            waffles.Add(Instantiate(wafflePrefab,
+            // Instantiate the waffle with a random x and y location within the bounds of the screen
+            Waffle waffle = Instantiate(wafflePrefab,
                 new Vector3(UnityEngine.Random.Range(mainCamera.orthographicSize * mainCamera.aspect, -mainCamera.orthographicSize * mainCamera.aspect),
                     UnityEngine.Random.Range(mainCamera.orthographicSize, -mainCamera.orthographicSize),
                     0),
-                Quaternion.identity));
+                Quaternion.identity);
+
+            // Add it to the list of waffles
+            waffles.Add(waffle);
         }
 
         // Spawn in the pancakes
         for (int i = 0; i < pancakeNumber; i++)
         {
-            // Instantiate the pancake with a random x and y location within the bounds of the screen, and add it to the list
-            pancakes.Add(Instantiate(pancakePrefab,
+            // Instantiate the pancake with a random x and y location within the bounds of the screen
+            Pancake pancake = Instantiate(pancakePrefab,
                 new Vector3(UnityEngine.Random.Range(mainCamera.orthographicSize * mainCamera.aspect, -mainCamera.orthographicSize * mainCamera.aspect),
                     UnityEngine.Random.Range(mainCamera.orthographicSize, -mainCamera.orthographicSize),
                     0),
-                Quaternion.identity));
+                Quaternion.identity);
+
+            // Add it to the list of pancakes
+            pancakes.Add(pancake);
         }
 
     }
@@ -109,6 +117,7 @@ public class Manager : Singleton<Manager>
         // Check each waffle
         for (int x = 0; x < waffles.Count; x++)
         {
+            // Get a reference to the waffle
             Waffle waffle = waffles[x];
 
             // Reset the obstacle collision flags every frame
