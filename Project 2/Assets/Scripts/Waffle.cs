@@ -56,7 +56,7 @@ public class Waffle : Agent
             case WaffleStates.Flee:
 
                 // Change the color to blue
-                spriteRenderer.color = Color.blue;
+                spriteRenderer.color = Color.cyan;
 
                 // Get all the pancakes in range
                 fleeForce = FleeFromClosePancakes(visionRadius) * fleeScalar;
@@ -87,24 +87,6 @@ public class Waffle : Agent
 
         // Add the scaled separation force to the ultimate force
         ultimaForce += SeparateWaffles() * separateScalar;
-    }
-
-    /// <summary>
-    /// Initializes the waffle -- called in parent's Awake() function.
-    /// </summary>
-    protected override void Init()
-    {
-        // Set a reference to the main camera
-        physicsObject.MainCamera = Manager.Instance.MainCamera;
-
-        // Initialize a random angle for the wander angle
-        wanderAngle = UnityEngine.Random.Range(-maxWanderAngle, maxWanderAngle);
-
-        // Set up the sprite renderer
-        spriteRenderer = GetComponent<SpriteRenderer>();
-
-        // Initialize maxForce
-        maxForce = defaultMaxForce;
     }
 
     /// <summary>

@@ -12,10 +12,9 @@ public abstract class Agent : MonoBehaviour
     // The physics object
     [SerializeField] protected PhysicsObject physicsObject;
 
-    // Maximum speed and force
-    [SerializeField] protected float maxSpeed;
-    [SerializeField] protected float maxForce;
+    // Maximum force
     [SerializeField] protected float defaultMaxForce;
+    protected float maxForce;
 
     // Sprite renderer
     protected SpriteRenderer spriteRenderer;
@@ -25,9 +24,7 @@ public abstract class Agent : MonoBehaviour
 
     // Obstacle avoidance
     protected List<Vector3> foundObstacles = new List<Vector3>(); // this is for debugging purposes only
-
     [SerializeField] protected float obstaclesScalar;
-
     [SerializeField] protected float obstacleAvoidTime;
 
     // Vector for wander force
@@ -69,11 +66,8 @@ public abstract class Agent : MonoBehaviour
     // The sum total of all the forces
     protected Vector3 ultimaForce;
 
-    // Agent manager
-    //[SerializeField] protected CollisionManager manager;
-
     // Range
-    [SerializeField] float separateRange = 1f;
+    [SerializeField] float separateRange;
 
     public PhysicsObject PhysicsObject
     {
@@ -83,32 +77,48 @@ public abstract class Agent : MonoBehaviour
 
     /* METHODS */
 
+
+    private void Awake()
+    {
+        // Set up the main camera
+        physicsObject.MainCamera = Manager.Instance.MainCamera;
+
+        // Initialize a random angle for the wander angle
+        wanderAngle = UnityEngine.Random.Range(-maxWanderAngle, maxWanderAngle);
+
+        // Set up the sprite renderer
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // Initialize maxForce and maxSpeed
+        maxForce = defaultMaxForce;
+        physicsObject.MaxSpeed = physicsObject.DefaultMaxSpeed;
+    }
+
     // Update is called once per frame
     void Update()
     {
         // Start with the ultimate force at zero
         ultimaForce = Vector3.zero;
 
-        // If the agent's obstacle collision was turned on, slow the agent down -- currently not working for unknown reasons
-        if (physicsObject.IsCollidingWithObstacle && maxForce == defaultMaxForce)
+        // If the agent's obstacle collision was turned on and the agent wasn't already slowed, slow the agent down
+        if (physicsObject.IsCollidingWithObstacle && physicsObject.MaxSpeed == physicsObject.DefaultMaxSpeed)
         {
-            maxForce = maxForce / 100;
+            // Decrease max speed
+            physicsObject.MaxSpeed = physicsObject.MaxSpeed / 10;
 
-            //Debug.Log("Well, we're here...");
+            // Decrease max force to decrease jitter
+            maxForce = maxForce / 10;
         }
+
+        // Otherwise
         else
         {
-            // If the max speed isn't already at the default
-            if (maxSpeed != defaultMaxForce)
-            {
-                // Set it back to the default
-                maxForce = defaultMaxForce;
+            // Set the max speed and max force back to the default
+            physicsObject.MaxSpeed = physicsObject.DefaultMaxSpeed;
+            maxForce = defaultMaxForce;
 
-                //Debug.Log("We're free!");
-
-                // Apply a force in the direction of the velocity to give the agent a boost
-                //physicsObject.ApplyForce(physicsObject.Velocity);
-            }
+            // Give the agent a boost in the direction of their current velocity so that the agent can speed up again
+            physicsObject.ApplyForce(physicsObject.Velocity);
         }
 
         // Calculate the steering forces (handled in the child classes)
@@ -121,17 +131,8 @@ public abstract class Agent : MonoBehaviour
         physicsObject.ApplyForce(ultimaForce);
     }
 
-    private void Awake()
-    {
-        // Initialize the agent
-        Init();
-    }
-
     // Protected method to calculate the steering forces
     protected abstract void CalcSteeringForces();
-
-    // Protected method to initialize agents
-    protected abstract void Init();
 
     /// <summary>
     /// Makes the agent seek a target.
@@ -144,7 +145,7 @@ public abstract class Agent : MonoBehaviour
         Vector3 desiredVelocity = targetPos - gameObject.transform.position;
 
         // Set desired = max speed
-        desiredVelocity = desiredVelocity.normalized * maxSpeed;
+        desiredVelocity = desiredVelocity.normalized * physicsObject.MaxSpeed;
 
         // Calculate seek steering force
         Vector3 seekingForce = desiredVelocity - physicsObject.Velocity;
@@ -177,7 +178,7 @@ public abstract class Agent : MonoBehaviour
         Vector3 desiredVelocity = gameObject.transform.position - targetPos;
 
         // Set desired = max speed
-        desiredVelocity = desiredVelocity.normalized * maxSpeed;
+        desiredVelocity = desiredVelocity.normalized * physicsObject.MaxSpeed;
 
         // Calculate seek steering force
         Vector3 seekingForce = desiredVelocity - physicsObject.Velocity;
@@ -193,20 +194,8 @@ public abstract class Agent : MonoBehaviour
     /// <returns>The steering force.</returns>
     protected Vector3 Flee(PhysicsObject target)
     {
-        // Call the other version of Seek
-        //  which returns the seeking steering force
-        //  and then return that returned vector.
+        // Call the other version of Flee
         return Flee(target.transform.position);
-    }
-
-    /// <summary>
-    /// Predicts the future position of an object after a certain amount of time.
-    /// </summary>
-    /// <param name="time">The time, in seconds, in between the current and future positions.</param>
-    /// <returns>The predicted future position.</returns>
-    public Vector3 CalcFuturePosition(float time)
-    {
-        return physicsObject.Velocity * time + transform.position;
     }
 
     /// <summary>
@@ -292,10 +281,9 @@ public abstract class Agent : MonoBehaviour
     }
 
     /// <summary>
-    /// Separates the agent from pancakes. Should likely be the same method as above since the logic is identical,
-    /// but I don't have the time at the moment to sort out how the type-checking logic should work.
+    /// Separates the agent from pancakes.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The steering force.</returns>
     protected Vector3 SeparatePancakes()
     {
         Vector3 separateForce = Vector3.zero;
@@ -330,6 +318,110 @@ public abstract class Agent : MonoBehaviour
         }
 
         return separateForce;
+    }
+
+    /// <summary>
+    /// Gets the pancakes in range and flees from them, weighted proportional to distance.
+    /// </summary>
+    /// <param name="radius">The range being fled from.</param>
+    /// <returns>A steering force fleeing from the pancakes.</returns>
+    protected Vector3 FleeFromClosePancakes(float radius)
+    {
+        Vector3 fleeForce = Vector3.zero;
+
+        // Get the list of pancakes -- should it instead be passed in from Waffle so that FindPancakesInRange is called less?
+        List<Pancake> pancakesInRange = FindPancakesInRange(radius);
+
+        // Loop through all the pancakes in the list
+        foreach (Pancake pancake in pancakesInRange)
+        {
+            // Get the square of the distance between the two agents
+            float dist = CalcSquaredDistance(transform.position, pancake.transform.position);
+
+            // As long as the distance is less than the given radius
+            if (dist < Math.Pow(radius, 2))
+            {
+                // Flee from the agent proportional to its distance
+                fleeForce = Flee(pancake.physicsObject) * radius / dist;
+            }
+        }
+
+        return fleeForce;
+    }
+
+    /// <summary>
+    /// Steers the agent away from obstacles.
+    /// </summary>
+    /// <returns>The steering force away from the obstacles.</returns>
+    protected Vector3 AvoidObstacles()
+    {
+        // Get the total force to avoid
+        Vector3 totalAvoidForce = Vector3.zero;
+
+        // Clear the list of found obstacles
+        foundObstacles.Clear();
+
+        // Loop through all the obstacles
+        foreach (Obstacle obstacle in Manager.Instance.Obstacles)
+        {
+            // Get the vector from the obstacle to the agent
+            Vector3 agentToObstacle = obstacle.transform.position - transform.position;
+
+            // Declare the right dot product to be used later
+            float rightDot = 0;
+
+            // Get the forward dot product
+            float forwardDot = Vector3.Dot(physicsObject.Velocity.normalized, agentToObstacle);
+
+            // If the obstacle is in front of the agent
+            if (forwardDot >= -obstacle.Radius)
+            {
+                // Is it within the box in front of us?
+
+                // Get the future position
+                Vector3 futurePos = CalcFuturePosition(obstacleAvoidTime);
+
+                // Get the distance between the agent and its future position
+                float dist = Vector3.Distance(transform.position, futurePos) + physicsObject.Radius;
+
+                // Get a steering force
+                Vector3 steeringForce = transform.right * (1 - forwardDot / dist) * physicsObject.MaxSpeed /* commenting out the maxSpeed made everything worse somehow */;
+
+                // If the object is within the distance between the agent and its future position
+                if (forwardDot <= dist + obstacle.Radius)
+                {
+                    // Get the right dot product by projecting onto the right axis
+                    rightDot = Vector3.Dot(transform.right, agentToObstacle);
+
+                    // If the obstacle is within the safe box width
+                    if (Mathf.Abs(rightDot) <= physicsObject.Radius + obstacle.Radius)
+                    {
+                        // If left, steer right
+                        if (rightDot < 0)
+                        {
+                            totalAvoidForce += steeringForce;
+                        }
+
+                        // If right, steer left
+                        else
+                        {
+                            totalAvoidForce -= steeringForce;
+                        }
+
+                        // Add the obstacle to the list of found obstacles
+                        foundObstacles.Add(obstacle.transform.position);
+                    }
+
+                }
+                // Otherwise, it's too far away
+
+
+            }
+            // Otherwise, it's behind the agent
+
+        }
+
+        return totalAvoidForce;
     }
 
     /// <summary>
@@ -393,32 +485,13 @@ public abstract class Agent : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets the pancakes in range and flees from them, weighted proportional to distance.
+    /// Predicts the future position of an object after a certain amount of time.
     /// </summary>
-    /// <param name="radius">The range being fled from.</param>
-    /// <returns>A steering force fleeing from the pancakes.</returns>
-    protected Vector3 FleeFromClosePancakes(float radius)
+    /// <param name="time">The time, in seconds, in between the current and future positions.</param>
+    /// <returns>The predicted future position.</returns>
+    public Vector3 CalcFuturePosition(float time)
     {
-        Vector3 fleeForce = Vector3.zero;
-
-        // Get the list of pancakes -- should it instead be passed in from Waffle so that FindPancakesInRange is called less?
-        List<Pancake> pancakesInRange = FindPancakesInRange(radius);
-
-        // Loop through all the pancakes in the list
-        foreach (Pancake pancake in pancakesInRange)
-        {
-            // Get the square of the distance between the two agents
-            float dist = CalcSquaredDistance(transform.position, pancake.transform.position);
-
-            // As long as the distance is less than the given radius
-            if (dist < Math.Pow(radius, 2))
-            {
-                // Flee from the agent proportional to its distance
-                fleeForce = Flee(pancake.physicsObject) * radius / dist;
-            }
-        }
-
-        return fleeForce;
+        return physicsObject.Velocity * time + transform.position;
     }
 
     /// <summary>
@@ -432,81 +505,6 @@ public abstract class Agent : MonoBehaviour
     }
 
     /// <summary>
-    /// Steers the agent away from obstacles.
-    /// </summary>
-    /// <returns>The steering force away from the obstacles.</returns>
-    protected Vector3 AvoidObstacles()
-    {
-        // Get the total force to avoid
-        Vector3 totalAvoidForce = Vector3.zero;
-
-        // Clear the list of found obstacles
-        foundObstacles.Clear();
-
-        // Loop through all the obstacles
-        foreach(Obstacle obstacle in Manager.Instance.Obstacles)
-        {
-            // Get the vector from the obstacle to the agent
-            Vector3 agentToObstacle = obstacle.transform.position - transform.position;
-
-            // Declare the right dot product to be used later
-            float rightDot = 0;
-
-            // Get the forward dot product
-            float forwardDot = Vector3.Dot(physicsObject.Velocity.normalized, agentToObstacle);
-
-            // If the obstacle is in front of the agent
-            if (forwardDot >= -obstacle.Radius)
-            {
-                // Is it within the box in front of us?
-
-                // Get the future position
-                Vector3 futurePos = CalcFuturePosition(obstacleAvoidTime);
-
-                // Get the distance between the agent and its future position
-                float dist = Vector3.Distance(transform.position, futurePos) + physicsObject.Radius;
-
-                // Get a steering force
-                Vector3 steeringForce = transform.right * (1 - forwardDot / dist) * physicsObject.MaxSpeed /* commenting out the maxSpeed made everything worse somehow */;
-
-                // If the object is within the distance between the agent and its future position
-                if (forwardDot <= dist + obstacle.Radius)
-                {
-                    // Get the right dot product by projecting onto the right axis
-                    rightDot = Vector3.Dot(transform.right, agentToObstacle);
-
-                    // If the obstacle is within the safe box width
-                    if (Mathf.Abs(rightDot) <= physicsObject.Radius + obstacle.Radius)
-                    {
-                        // If left, steer right
-                        if (rightDot < 0)
-                        {
-                            totalAvoidForce += steeringForce;
-                        }
-
-                        // If right, steer left
-                        else
-                        {
-                            totalAvoidForce -= steeringForce;
-                        }
-
-                        // Add the obstacle to the list of found obstacles
-                        foundObstacles.Add(obstacle.transform.position);
-                    }
-
-                }
-                // Otherwise, it's too far away
-
-
-            }
-            // Otherwise, it's behind the agent
-
-        }
-
-        return totalAvoidForce;
-    }
-
-    /// <summary>
     /// Helper method that calculates the distance squared between two vectors.
     /// </summary>
     /// <param name="a">The first vector.</param>
@@ -517,19 +515,21 @@ public abstract class Agent : MonoBehaviour
         return Mathf.Pow(b.x - a.x, 2) + Mathf.Pow(b.y - a.y, 2);
     }
 
-    
+    /// <summary>
+    /// Draws gizmos for visualizing useful info.
+    /// </summary>
     private void OnDrawGizmos()
     {
         //
         //  Draw safe space box
         //
-        Vector3 futurePos = CalcFuturePosition(/*avoidTime*/2f);
+        Vector3 futurePos = CalcFuturePosition(obstacleAvoidTime);
 
         float dist = Vector3.Distance(transform.position, futurePos) + physicsObject.Radius;
 
         Vector3 boxSize = new Vector3(physicsObject.Radius * 2f,
-            dist
-            , physicsObject.Radius * 2f);
+            dist,
+            physicsObject.Radius * 2f);
 
         Vector3 boxCenter = Vector3.zero;
         boxCenter.y += dist / 2f;

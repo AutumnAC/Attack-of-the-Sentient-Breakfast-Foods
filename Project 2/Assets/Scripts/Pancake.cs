@@ -50,7 +50,7 @@ public class Pancake : Agent
 
                 // Flocking -- seek the center point and move towards the shared direction
                 ultimaForce += Seek(Manager.Instance.CenterPoint);
-                ultimaForce += Manager.Instance.SharedDirection * maxSpeed - physicsObject.Velocity;
+                ultimaForce += Manager.Instance.SharedDirection * physicsObject.MaxSpeed - physicsObject.Velocity;
 
                 // Find the closest waffle
                 target = FindClosestWaffle(visionRadius);
@@ -103,24 +103,4 @@ public class Pancake : Agent
         // Add the scaled separation force to the ultimate force
         ultimaForce += SeparatePancakes() * separateScalar;
     }
-
-    /// <summary>
-    /// Initializes the pancake -- called in parent's Awake() function.
-    /// </summary>
-    protected override void Init()
-    {
-        // Set up the main camera
-        physicsObject.MainCamera = Manager.Instance.MainCamera;
-
-        // Initialize a random angle for the wander angle
-        wanderAngle = UnityEngine.Random.Range(-maxWanderAngle, maxWanderAngle);
-
-        // Set up the sprite renderer
-        spriteRenderer = GetComponent<SpriteRenderer>();
-
-        // Initialize maxForce
-        maxForce = defaultMaxForce;
-
-    }
-
 }

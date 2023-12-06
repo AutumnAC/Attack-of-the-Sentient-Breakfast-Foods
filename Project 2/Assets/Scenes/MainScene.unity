@@ -249,7 +249,8 @@ MonoBehaviour:
   pancakes: []
   obstacles: []
   waffleNumber: 20
-  pancakeNumber: 7
+  pancakeNumber: 5
+  obstacleNumber: 2
   wafflePrefab: {fileID: 5912067745649990370, guid: a172424b7e3a46a47bf763438658d9e6, type: 3}
   pancakePrefab: {fileID: 2924947148180598311, guid: 2675df30e3540d246ab060640ce46e9c, type: 3}
   obstaclePrefab: {fileID: 471426429909896151, guid: 141cbbfd646e4d940ae9135a82cacccb, type: 3}

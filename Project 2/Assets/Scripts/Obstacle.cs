@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Class purpose: Store information related to obstacles
+// Class purpose: To store information related to obstacles
 
 public class Obstacle : MonoBehaviour
 {

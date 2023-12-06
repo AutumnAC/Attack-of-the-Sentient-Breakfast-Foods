@@ -17,10 +17,11 @@ public class PhysicsObject : MonoBehaviour
     [SerializeField] private Vector3 acceleration = Vector3.zero;
 
     // Mass of object
-    [SerializeField] private float mass = 1;
+    [SerializeField] private float mass;
 
     // Maximum speed
-    [SerializeField] private float maxSpeed = 10;
+    private float maxSpeed;
+    [SerializeField] private float defaultMaxSpeed;
 
     // Window bounds
     private Vector3 screenMax = Vector3.zero;
@@ -55,6 +56,12 @@ public class PhysicsObject : MonoBehaviour
     public float MaxSpeed
     {
         get { return maxSpeed; }
+        set { maxSpeed = value; }
+    }
+
+    public float DefaultMaxSpeed
+    {
+        get { return defaultMaxSpeed; }
 
         // Get-only property
     }

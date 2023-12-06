@@ -20,6 +20,7 @@ public class Manager : Singleton<Manager>
     // Number of each type of agent to spawn in the scene
     [SerializeField] private int waffleNumber;
     [SerializeField] private int pancakeNumber;
+    [SerializeField] private int obstacleNumber;
 
     // Prefabs for agents and obstacles
     [SerializeField] private Waffle wafflePrefab;
@@ -105,14 +106,28 @@ public class Manager : Singleton<Manager>
             pancakes.Add(pancake);
         }
 
+        // Spawn in the obstacles
+        for (int i = 0; i < obstacleNumber; i++)
+        {
+            // Instantiate the obstacle with a random x and y location within the bounds of the screen
+            Obstacle obstacle = Instantiate(obstaclePrefab,
+                new Vector3(UnityEngine.Random.Range(mainCamera.orthographicSize * mainCamera.aspect, -mainCamera.orthographicSize * mainCamera.aspect),
+                    UnityEngine.Random.Range(mainCamera.orthographicSize, -mainCamera.orthographicSize),
+                    0),
+                Quaternion.identity);
+
+            // Add it to the list of obstacles
+            obstacles.Add(obstacle);
+        }
+
     }
 
     // Update is called once per frame
     void Update()
     {
         // Get the center point and average direction for flocking
-        centerPoint = GetCenterPoint();
-        sharedDirection = GetSharedDirection();
+        centerPoint = GetPancakeCenterPoint();
+        sharedDirection = GetSharedPancakeDirection();
 
         // Check each waffle
         for (int x = 0; x < waffles.Count; x++)
@@ -123,19 +138,13 @@ public class Manager : Singleton<Manager>
             // Reset the obstacle collision flags every frame
             waffle.PhysicsObject.IsCollidingWithObstacle = false;
 
-
             // Check each waffle against each pancake
             for (int y = 0; y < pancakes.Count; y++)
             {
-                //Debug.Log("x, y: " + x + ", " + y);
-
                 // Check if they're colliding
                 if (waffles.Count > 0 && CollisionCheck(waffles[x].PhysicsObject, pancakes[y].PhysicsObject))
                 {
-                    //Debug.Log("x, y: " + x + ", " + y + " are colliding");
-
                     // If they are, let the waffle know it's collided and remove the waffle from the list
-                    //waffles[x].PhysicsObject.IsColliding = true;
                     waffles.RemoveAt(x);
 
                     // Destroy the waffle
@@ -146,18 +155,14 @@ public class Manager : Singleton<Manager>
                     {
                         x--;
                     }
-
-                    // Set the pancake's collision flag to true -- currently does nothing
-                    // pancakes[y].PhysicsObject.IsColliding = true;
                 }
             }
 
             // Check each waffle against each obstacle
             for (int y = 0; y < obstacles.Count; y++)
             {
-                // If there are waffles and obstacles in the scene, and one of the obstacles and waffles is colliding
+                // If there are waffles in the scene, and one of the obstacles and waffles is colliding
                 if (waffles.Count > 0
-                    && obstacles.Count > 0
                     && CollisionCheck(waffle.PhysicsObject.Radius, obstacles[y].Radius,
                         waffle.transform.position, obstacles[y].transform.position))
                 {
@@ -175,9 +180,8 @@ public class Manager : Singleton<Manager>
 
             for (int y = 0; y < obstacles.Count; y++)
             {
-                // If there are obstacles in the scene, and one of the obstacles and pancakes is colliding
-                if (obstacles.Count > 0
-                    && CollisionCheck(pancake.PhysicsObject.Radius, obstacles[y].Radius,
+                // If one of the obstacles and pancakes is colliding
+                if (CollisionCheck(pancake.PhysicsObject.Radius, obstacles[y].Radius,
                         pancake.transform.position, obstacles[y].transform.position))
                 {
                     // Turn on the pancake's collision flag
@@ -189,7 +193,7 @@ public class Manager : Singleton<Manager>
     }
 
     /// <summary>
-    /// Adds a pool of syrup wherever the player clicks.
+    /// Adds an obstacle wherever the player clicks.
     /// </summary>
     /// <param name="context"></param>
     public void OnFire(InputAction.CallbackContext context)
@@ -218,7 +222,7 @@ public class Manager : Singleton<Manager>
     /// </summary>
     /// <param name="a">The radius of the first object to be checked for collision.</param>
     /// <param name="b">The radius of the second object to be checked for collision.</param>
-    /// <returns></returns>
+    /// <returns>True if the objects are colliding and false if not.</returns>
     private bool CollisionCheck(PhysicsObject a, PhysicsObject b)
     {
         // Call the other CollisionCheck
@@ -230,24 +234,22 @@ public class Manager : Singleton<Manager>
     /// </summary>
     /// <param name="aRadius">The radius of the first object.</param>
     /// <param name="bRadius">The radius of the second object.</param>
-    /// <param name="aPosition"></param>
-    /// <param name="bPosition"></param>
-    /// <returns></returns>
+    /// <param name="aPosition">The position of the first object.</param>
+    /// <param name="bPosition">The position of the second object.</param>
+    /// <returns>True if the objects are colliding and false if not.</returns>
     private bool CollisionCheck(float aRadius, float bRadius, Vector3 aPosition, Vector3 bPosition)
     {
         // Check if the combined lengths of the radii are less than the distance between them
         return Mathf.Pow(aRadius + bRadius, 2) >
             Mathf.Pow(bPosition.x - aPosition.x, 2)
             + Mathf.Pow(bPosition.y - aPosition.y, 2);
-
     }
-
 
     /// <summary>
     /// Gets the center point of all the pancakes.
     /// </summary>
     /// <returns>A steering vector pointng towards the center point.</returns>
-    private Vector3 GetCenterPoint()
+    private Vector3 GetPancakeCenterPoint()
     {
         Vector3 totalVector = new Vector3();
 
@@ -266,7 +268,7 @@ public class Manager : Singleton<Manager>
     /// Gets the average direction of all the pancakes.
     /// </summary>
     /// <returns>The average direction of all the pancakes.</returns>
-    private Vector3 GetSharedDirection()
+    private Vector3 GetSharedPancakeDirection()
     {
         Vector3 totalVector = Vector3.zero;
 
