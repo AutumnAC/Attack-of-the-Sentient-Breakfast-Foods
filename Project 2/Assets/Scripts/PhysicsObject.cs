@@ -33,7 +33,7 @@ public class PhysicsObject : MonoBehaviour
     [SerializeField] private float radius;
 
     // Collision flags
-    private bool isCollidingWithPancake;
+    private bool isCollidingWithAgent;
     private bool isCollidingWithObstacle;
 
 
@@ -86,10 +86,10 @@ public class PhysicsObject : MonoBehaviour
         // Get-only property
     }
 
-    public bool IsCollidingWithPancake
+    public bool IsCollidingWithAgent
     {
-        get { return isCollidingWithPancake; }
-        set { isCollidingWithPancake = value; }
+        get { return isCollidingWithAgent; }
+        set { isCollidingWithAgent = value; }
     }
 
     public bool IsCollidingWithObstacle

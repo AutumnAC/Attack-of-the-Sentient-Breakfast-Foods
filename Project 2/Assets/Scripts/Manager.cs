@@ -144,11 +144,12 @@ public class Manager : Singleton<Manager>
                 // Check if they're colliding
                 if (waffles.Count > 0 && CollisionCheck(waffles[x].PhysicsObject, pancakes[y].PhysicsObject))
                 {
-                    // If they are, let the waffle know it's collided and remove the waffle from the list
+                    // If they are, remove the waffle from the list and destroy it
                     waffles.RemoveAt(x);
-
-                    // Destroy the waffle
                     Destroy(waffle.gameObject);
+
+                    // Turn on the pancake's collision flag
+                    pancakes[y].PhysicsObject.IsCollidingWithAgent = true;
 
                     // Step backwards in the list
                     if (x > 0)

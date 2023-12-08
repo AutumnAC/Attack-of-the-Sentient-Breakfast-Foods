@@ -28,7 +28,7 @@ public abstract class Agent : MonoBehaviour
 
     // STAYING IN BOUNDS
 
-    // Vector for bounds force
+    // Vector for bounds force -- used for debugging purposes
     protected Vector3 boundsForce;
 
     // The scalar to increase the bounds force by
@@ -61,7 +61,7 @@ public abstract class Agent : MonoBehaviour
 
     // WANDER
 
-    // Vector for wander force
+    // Vector for wander force -- used for debugging purposes
     protected Vector3 wanderForce;
 
     // The scalar to increase the wander force by
@@ -76,7 +76,7 @@ public abstract class Agent : MonoBehaviour
 
     // FLEE
 
-    // Vector for flee force
+    // Vector for flee force -- used for debugging purposes
     protected Vector3 fleeForce;
 
     // The scalar to increase the flee force by
@@ -125,11 +125,11 @@ public abstract class Agent : MonoBehaviour
         // If the agent's obstacle collision was turned on and the agent wasn't already slowed, slow the agent down
         if (physicsObject.IsCollidingWithObstacle && physicsObject.MaxSpeed == physicsObject.DefaultMaxSpeed)
         {
-            // Decrease max speed
+            // Slow the agent down
             physicsObject.MaxSpeed = physicsObject.MaxSpeed / 10;
 
             // Decrease max force to decrease jitter
-            maxForce = maxForce / 10;
+            maxForce = maxForce / 5;
         }
 
         // Otherwise
@@ -177,19 +177,6 @@ public abstract class Agent : MonoBehaviour
     }
 
     /// <summary>
-    /// Makes the agent seek a target.
-    /// </summary>
-    /// <param name="target">The target to seek.</param>
-    /// <returns>The steering force.</returns>
-    protected Vector3 Seek(PhysicsObject target)
-    {
-        // Call the other version of Seek
-        //  which returns the seeking steering force
-        //  and then return that returned vector.
-        return Seek(target.transform.position);
-    }
-
-    /// <summary>
     /// Makes the agent flee from a target.
     /// </summary>
     /// <param name="targetPos">The position of the target to flee from.</param>
@@ -207,17 +194,6 @@ public abstract class Agent : MonoBehaviour
 
         // Return seek steering force
         return seekingForce;
-    }
-
-    /// <summary>
-    /// Makes the agent flee from a target.
-    /// </summary>
-    /// <param name="target">The target to flee from.</param>
-    /// <returns>The steering force.</returns>
-    protected Vector3 Flee(PhysicsObject target)
-    {
-        // Call the other version of Flee
-        return Flee(target.transform.position);
     }
 
     /// <summary>
@@ -338,7 +314,7 @@ public abstract class Agent : MonoBehaviour
         if (Mathf.Epsilon < dist)
         {
             // Flee from the agent proportional to its distance
-            separateForce = Flee(a.physicsObject) * separateRange / dist;
+            separateForce = Flee(a.transform.position) * separateRange / dist;
         }
 
         return separateForce;
@@ -351,13 +327,15 @@ public abstract class Agent : MonoBehaviour
     /// <returns>A steering force fleeing from the pancakes.</returns>
     protected Vector3 FleeFromClosePancakes(float radius)
     {
-        FleeFromClosePancakes(radius, FindPancakesInRange(radius));
+        Vector3 fleeForce = FleeFromClosePancakes(radius, FindPancakesInRange(radius));
 
         return fleeForce;
     }
 
     protected Vector3 FleeFromClosePancakes(float radius, List<Pancake> pancakesInRange)
     {
+        // ideas: make the pancakes in range a field
+
         Vector3 fleeForce = Vector3.zero;
 
         // Loop through all the pancakes in the list
@@ -370,7 +348,7 @@ public abstract class Agent : MonoBehaviour
             if (dist < Math.Pow(radius, 2))
             {
                 // Flee from the agent proportional to its distance
-                fleeForce = Flee(pancake.physicsObject) * radius / dist;
+                fleeForce += Flee(pancake.transform.position) * radius / dist;
             }
         }
 

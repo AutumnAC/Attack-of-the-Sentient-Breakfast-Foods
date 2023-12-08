@@ -103,7 +103,6 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   acceleration: {x: 0, y: 0, z: 0}
   mass: 3
-  maxSpeed: 3
   defaultMaxSpeed: 3
   radius: 0.6
 --- !u!114 &2924947148180598311
@@ -119,9 +118,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   physicsObject: {fileID: 7949740958407132850}
-  maxForce: 1
   defaultMaxForce: 1
   visionRadius: 2
+  boundsScalar: 2
+  boundsTime: 1
+  separateScalar: 1
+  separateRange: 1
   obstaclesScalar: 1
   obstacleAvoidTime: 2
   wanderScalar: 1
@@ -129,8 +131,5 @@ MonoBehaviour:
   maxWanderAngle: 360
   fleeScalar: 1
   seekScalar: 1
-  boundsScalar: 2
-  boundsTime: 1
-  separateScalar: 1
-  separateRange: 1
   target: {fileID: 0}
+  cooldownTimerAmount: 1000

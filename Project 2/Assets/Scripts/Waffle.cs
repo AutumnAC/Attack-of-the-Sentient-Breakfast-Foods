@@ -23,7 +23,7 @@ public class Waffle : Agent
     protected override void CalcSteeringForces()
     {
         // If the waffle's pancake collision flag was turned on, destroy it
-        if (physicsObject.IsCollidingWithPancake)
+        if (physicsObject.IsCollidingWithAgent)
         {
             Destroy(gameObject);
         }

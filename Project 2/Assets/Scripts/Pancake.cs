@@ -20,6 +20,10 @@ public class Pancake : Agent
     // The target to be used in Seek
     [SerializeField] private Waffle target;
 
+    // The countdown timer
+    [SerializeField] private int cooldownTimerAmount;
+    private int cooldownTimer = 0;
+
     /// <summary>
     /// Calculates the steering forces that affect the pancake.
     /// </summary>
@@ -47,8 +51,40 @@ public class Pancake : Agent
                 // Find the closest waffle in range
                 target = FindClosestWaffle(visionRadius);
 
-                // If there is a target in range, switch states
-                if (target != null)
+                // If the counter has finished counting down
+                if (cooldownTimer == 0)
+                {
+                    // Set the collision flag to false
+                    physicsObject.IsCollidingWithAgent = false;
+
+                    // Reset the countdown timer
+                    cooldownTimer = cooldownTimerAmount;
+
+                    // Set the max speed and max force back to the default
+                    physicsObject.MaxSpeed = physicsObject.DefaultMaxSpeed;
+                    maxForce = defaultMaxForce;
+
+                    // Give the pancake a boost in the direction of the current velocity so that it can speed up again
+                    physicsObject.ApplyForce(physicsObject.Velocity);
+                }
+
+                // If the counter isn't at 0 but the pancake's collision flag is still on
+                else if (physicsObject.IsCollidingWithAgent)
+                {
+                    spriteRenderer.color = Color.green; // temp debugging code
+
+                    // Subtract from the countdown timer
+                    cooldownTimer--;
+
+                    // Slow the pancake down
+                    physicsObject.MaxSpeed = physicsObject.MaxSpeed / 5;
+
+                    // Decrease max force to decrease jitter
+                    maxForce = maxForce / 3;
+                }
+
+                // If there is a target in range and the timer isn't currently counting down, switch states
+                if (target != null && cooldownTimer == cooldownTimerAmount)
                 {
                     currentState = PancakeStates.Seek;
                 }
@@ -68,8 +104,8 @@ public class Pancake : Agent
                 // Check again to find the closest waffle in range
                 target = FindClosestWaffle(visionRadius);
 
-                // If there is no target, go back to patrolling
-                if (target == null)
+                // If there is no target or if the pancake has just collided with a waffle, go back to patrolling
+                if (target == null || physicsObject.IsCollidingWithAgent)
                 {
                     currentState = PancakeStates.Flock;
                 }
