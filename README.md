@@ -10,11 +10,11 @@
 
 ## Simulation Design
 
-In this simulation, waffles will flee from the evil pancakes, who are constantly chasing them and trying to devour them. Both waffles and pancakes will avoid syrup, which can trap them.
+In this simulation, waffles will flee from the evil pancakes, who are constantly chasing them and trying to devour them. Both waffles and pancakes will avoid syrup, which will slow them down if they collide with it.
 
 ### Controls
 
-- The player can left-click to place a puddle of syrup. (A stretch goal would be to add functionality so that the longer the player holds down the mouse for, the bigger the puddle of syrup becomes.) The player can use this strategically to trap the evil pancakes and keep them from getting to the waffles, or, if they're feeling mean, they can use it to trap the waffles instead.
+- The player can left-click to place a puddle of syrup. The player can use this strategically to block off or slow down the evil pancakes and keep them from getting to the waffles, or, if they're feeling mean, they can use it to trap the waffles instead.
 
 ## Waffle
 
@@ -26,7 +26,7 @@ The waffle will wander around the screen randomly and avoid the evil pancakes at
 
 #### Steering Behaviors
 
-- Wander: The waffle will randomly wander around the play area with the wander steering behavior.
+- Wander: The waffle will randomly wander around the play area with the Wander steering behavior.
 - Bounds: The waffle will stay in bounds.
 - Obstacles:
     - The waffle will avoid syrup in this state.
@@ -39,12 +39,12 @@ The waffle will wander around the screen randomly and avoid the evil pancakes at
    
 ### Flee
 
-**Objective:** The waffle wants to avoid getting eaten by a pancake. The waffle turns blue when in this state.
+**Objective:** The waffle will try to avoid getting eaten by any nearby pancake. The waffle turns blue when in this state.
 
 #### Steering Behaviors
 
-- Flee: The waffle will run from nearby pancakes using multiple uses of the flee steering behavior, weighted by the distance between it and the pancakes (very similar to Separate).
-    - Input: All pancakes within a certain range
+- Flee: The waffle will run from nearby pancakes by using the Flee steering behavior to avoid each of them, weighted by the distance between it and each pancake (in a way similar to the Separate steering behavior).
+    - Input: All pancakes within a certain radius.
 - Bounds: The waffle will stay in bounds.
 - Obstacles
     - The waffle will avoid syrup in this state.
@@ -61,14 +61,13 @@ The pancake roves the play area as a pack with other pancakes and will chase aft
 
 ### Patrol
 
-**Objective:** The pancake will wander across the screen as a group with other pancakes, searching for waffles.
+**Objective:** The pancake will flock with other pancakes and wander across the screen, searching for waffles.
 
 #### Steering Behaviors
 
-- Flocking: The pancake will flock with other pancakes.
-- Wander: The pancake will wander around the play area.
+- Flock: The pancake will use Flocking to stay in a pack with other pancakes.
+- Wander: The pancake will rove around the play area using the Wander steering behavior.
 - Bounds: The pancake will stay in bounds.
-- Flow field/path following: A stretch goal would be to add path following or flow field following.
 - Obstacles
     - Pancakes will avoid syrup in this state.
 - Seperation
@@ -76,8 +75,8 @@ The pancake roves the play area as a pack with other pancakes and will chase aft
    
 #### State Transistions
 
-- If the pancake has eaten/collided with a waffle, it will transition to this state for a short period of time before checking for nearby waffles again
-- It will also transition to this state if there are no waffles within a certain radius of it
+- If the pancake has eaten/collided with a waffle, it will transition to this state for a short period of time before seeking after any waffles, using a cooldown timer to determine this.
+- It will also transition to this state if there are no waffles within a certain radius of it.
    
 ### Seek
 
@@ -95,7 +94,7 @@ The pancake roves the play area as a pack with other pancakes and will chase aft
 
 #### State Transistions
 
-- It will transition to this state if there is a waffle within a certan radius of it
+- It will transition to this state if there is a waffle within a certan radius of it and if its cooldown timer for having just eaten a waffle has finished counting down.
 
 ## Sources
 
@@ -113,5 +112,5 @@ _List any errors, lack of error checking, or specific information that I need to
 
 ### Requirements not completed
 
-_If you did not complete a project requirement, notate that here_
+To the best of my knowledge, I've completed all requirements.
 
