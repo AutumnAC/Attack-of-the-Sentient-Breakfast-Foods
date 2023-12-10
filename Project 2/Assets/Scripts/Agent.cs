@@ -126,14 +126,14 @@ public abstract class Agent : MonoBehaviour
         if (physicsObject.IsCollidingWithObstacle && physicsObject.MaxSpeed == physicsObject.DefaultMaxSpeed)
         {
             // Slow the agent down
-            physicsObject.MaxSpeed = physicsObject.MaxSpeed / 10;
+            physicsObject.MaxSpeed = physicsObject.MaxSpeed / 5;
 
             // Decrease max force to decrease jitter
             maxForce = maxForce / 5;
         }
 
-        // Otherwise
-        else
+        // If the agent has just stopped colliding (if it isn't colliding and the max speed isn't the default)
+        else if (!physicsObject.IsCollidingWithObstacle && physicsObject.MaxSpeed != physicsObject.DefaultMaxSpeed)
         {
             // Set the max speed and max force back to the default
             physicsObject.MaxSpeed = physicsObject.DefaultMaxSpeed;
@@ -327,16 +327,10 @@ public abstract class Agent : MonoBehaviour
     /// <returns>A steering force fleeing from the pancakes.</returns>
     protected Vector3 FleeFromClosePancakes(float radius)
     {
-        Vector3 fleeForce = FleeFromClosePancakes(radius, FindPancakesInRange(radius));
-
-        return fleeForce;
-    }
-
-    protected Vector3 FleeFromClosePancakes(float radius, List<Pancake> pancakesInRange)
-    {
-        // ideas: make the pancakes in range a field
-
         Vector3 fleeForce = Vector3.zero;
+
+        // Get all the pancakes in range
+        List<Pancake> pancakesInRange = FindPancakesInRange(radius);
 
         // Loop through all the pancakes in the list
         foreach (Pancake pancake in pancakesInRange)

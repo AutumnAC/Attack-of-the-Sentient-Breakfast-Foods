@@ -103,7 +103,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0, z: 0}
   acceleration: {x: 0, y: 0, z: 0}
   mass: 3
-  defaultMaxSpeed: 3
+  defaultMaxSpeed: 4
   radius: 0.6
 --- !u!114 &2924947148180598311
 MonoBehaviour:
@@ -121,15 +121,15 @@ MonoBehaviour:
   defaultMaxForce: 1
   visionRadius: 2
   boundsScalar: 2
-  boundsTime: 1
+  boundsTime: 3
   separateScalar: 1
   separateRange: 1
-  obstaclesScalar: 1
-  obstacleAvoidTime: 2
+  obstaclesScalar: 2
+  obstacleAvoidTime: 5
   wanderScalar: 1
   wanderAngle: 0
   maxWanderAngle: 360
   fleeScalar: 1
   seekScalar: 1
   target: {fileID: 0}
-  cooldownTimerAmount: 1000
+  cooldownTimerAmount: 250

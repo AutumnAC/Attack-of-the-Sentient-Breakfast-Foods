@@ -59,28 +59,13 @@ public class Pancake : Agent
 
                     // Reset the countdown timer
                     cooldownTimer = cooldownTimerAmount;
-
-                    // Set the max speed and max force back to the default
-                    physicsObject.MaxSpeed = physicsObject.DefaultMaxSpeed;
-                    maxForce = defaultMaxForce;
-
-                    // Give the pancake a boost in the direction of the current velocity so that it can speed up again
-                    physicsObject.ApplyForce(physicsObject.Velocity);
                 }
 
                 // If the counter isn't at 0 but the pancake's collision flag is still on
                 else if (physicsObject.IsCollidingWithAgent)
                 {
-                    spriteRenderer.color = Color.green; // temp debugging code
-
                     // Subtract from the countdown timer
                     cooldownTimer--;
-
-                    // Slow the pancake down
-                    physicsObject.MaxSpeed = physicsObject.MaxSpeed / 5;
-
-                    // Decrease max force to decrease jitter
-                    maxForce = maxForce / 3;
                 }
 
                 // If there is a target in range and the timer isn't currently counting down, switch states

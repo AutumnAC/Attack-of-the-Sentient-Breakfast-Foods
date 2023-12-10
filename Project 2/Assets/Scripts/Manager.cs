@@ -173,12 +173,16 @@ public class Manager : Singleton<Manager>
             }
         }
 
-        // Check each pancake against each obstacle
+        // Loop through each pancake
         for (int x = 0; x < pancakes.Count; x++)
         {
             // Get a reference to the current pancake
             Pancake pancake = pancakes[x];
 
+            // Reset the obstacle collision flag
+            pancake.PhysicsObject.IsCollidingWithObstacle = false;
+
+            // Check the pancake against each obstacle
             for (int y = 0; y < obstacles.Count; y++)
             {
                 // If one of the obstacles and pancakes is colliding

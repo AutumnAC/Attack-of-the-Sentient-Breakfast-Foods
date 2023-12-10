@@ -124,8 +124,8 @@ MonoBehaviour:
   boundsTime: 1
   separateScalar: 1
   separateRange: 1
-  obstaclesScalar: 1
-  obstacleAvoidTime: 1
+  obstaclesScalar: 2
+  obstacleAvoidTime: 2
   wanderScalar: 1
   wanderAngle: 0
   maxWanderAngle: 360
