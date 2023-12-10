@@ -108,7 +108,7 @@ The pancake roves the play area as a pack with other pancakes and will chase aft
 
 ## Known Issues
 
-_List any errors, lack of error checking, or specific information that I need to know to run your program_
+There are no known issues.
 
 ### Requirements not completed
 
