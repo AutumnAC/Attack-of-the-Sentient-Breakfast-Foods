@@ -108,7 +108,7 @@ The pancake roves the play area as a pack with other pancakes and will chase aft
 
 ## Known Issues
 
-There are no known issues.
+The balancing isn't quite perfect.
 
 ### Requirements not completed
 
