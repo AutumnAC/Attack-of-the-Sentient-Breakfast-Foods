@@ -39,7 +39,7 @@ The waffle will wander around the screen randomly and avoid the evil pancakes at
    
 ### Flee
 
-**Objective:** The waffle will try to avoid getting eaten by any nearby pancake. The waffle turns blue when in this state.
+**Objective:** The waffle will try to avoid getting eaten by any nearby pancake. The waffle turns cyan when in this state.
 
 #### Steering Behaviors
 
