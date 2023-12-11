@@ -18,7 +18,7 @@ In this simulation, waffles will flee from the evil pancakes, who are constantly
 
 ## Waffle
 
-The waffle will wander around the screen randomly and avoid the evil pancakes at all costs.
+The waffle will wander around the screen randomly and avoid the evil pancakes at all costs, since it will be destroyed if the pancake collides with it.
 
 ### Wander
 
@@ -57,7 +57,7 @@ The waffle will wander around the screen randomly and avoid the evil pancakes at
 
 ## Pancake
 
-The pancake roves the play area as a pack with other pancakes and will chase after any waffles it encounters.
+The pancake roves the play area as a pack with other pancakes and will chase after any waffles it encounters, destroying any it touches.
 
 ### Patrol
 
