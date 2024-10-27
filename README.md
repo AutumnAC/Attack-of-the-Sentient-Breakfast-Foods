@@ -3,10 +3,11 @@
 [Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)
 
 
-### Student Info
+### Info
 
--   Name: Autumn Conway
--   Section: 2
+Attack of the Sentient Breakfast Foods is a simple simulation that uses steering behaviors such as seek, flee, and obstacle avoidance to guide predator pancakes and prey waffles around syrupy obstacles in the play area.
+This project was a class assignment; I was to use Unity to create two different types of agents with distinct steering behaviors who both avoided an obstacle of some kind. I didn't have to make it so that the obstacle -- the syrup, in my case -- slowed the agents down whenever they happened to collide with the obstacles, but I thought it made the simulation a lot more interesting to watch!
+One interesting requirement of the assignment was that none of Unity's built-in collision detection could be used; I had to code my own, a challenge I really enjoyed. I ultimately decided to use circle collision, which I was a bit nervous about given how elliptical my waffles and pancakes were, but it ended up working really well.
 
 ## Simulation Design
 
